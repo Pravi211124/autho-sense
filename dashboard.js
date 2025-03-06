@@ -1,204 +1,411 @@
 
 document.addEventListener('DOMContentLoaded', function() {
-  // Sidebar toggle on mobile
-  const sidebarToggle = document.getElementById('sidebarToggle');
-  const sidebar = document.querySelector('.sidebar');
+  // Initialize date and time
+  updateDateTime();
+  setInterval(updateDateTime, 1000);
   
-  if (sidebarToggle) {
-    sidebarToggle.addEventListener('click', function() {
-      sidebar.classList.toggle('open');
+  // Set current year in footer
+  document.getElementById('footer-year').textContent = new Date().getFullYear();
+  
+  // Mobile menu toggle
+  const menuToggle = document.getElementById('menuToggle');
+  const navLinks = document.querySelector('.nav-links');
+  
+  if (menuToggle) {
+    menuToggle.addEventListener('click', function() {
+      navLinks.classList.toggle('active');
     });
   }
   
-  // Logout button handler
-  const logoutBtn = document.getElementById('logoutBtn');
+  // Logout button functionality
+  const logoutButton = document.getElementById('logoutButton');
+  if (logoutButton) {
+    logoutButton.addEventListener('click', function() {
+      window.location.href = 'index.html';
+    });
+  }
   
-  if (logoutBtn) {
-    logoutBtn.addEventListener('click', function() {
-      const confirmLogout = confirm('Are you sure you want to log out?');
-      
-      if (confirmLogout) {
-        window.location.href = 'index.html';
+  // Face authentication setup
+  const faceVideo = document.getElementById('faceVideo');
+  const startFaceAuthButton = document.getElementById('startFaceAuth');
+  const faceStatus = document.getElementById('faceStatus');
+  const faceConfidence = document.getElementById('faceConfidence');
+  const faceConfidenceValue = document.getElementById('faceConfidenceValue');
+  
+  let faceStream = null;
+  let faceAuthActive = false;
+  let faceDetectionInterval = null;
+  
+  // Voice authentication setup
+  const voiceCanvas = document.getElementById('voiceCanvas');
+  const startVoiceAuthButton = document.getElementById('startVoiceAuth');
+  const voiceStatus = document.getElementById('voiceStatus');
+  const voiceConfidence = document.getElementById('voiceConfidence');
+  const voiceConfidenceValue = document.getElementById('voiceConfidenceValue');
+  
+  let voiceStream = null;
+  let voiceAuthActive = false;
+  let audioContext = null;
+  let analyser = null;
+  let animationFrameId = null;
+  
+  // Auto Logout functionality
+  let autoLogout = null;
+  
+  // Initialize Auto Logout with settings from UI
+  function initAutoLogout() {
+    const enableAutoLogout = document.getElementById('enableAutoLogout').checked;
+    const autoLogoutDuration = parseInt(document.getElementById('autoLogoutDuration').value, 10);
+    const enableLogoutWarning = document.getElementById('enableLogoutWarning').checked;
+    
+    // Create new instance if needed
+    if (!autoLogout) {
+      autoLogout = new AutoLogout({
+        timeoutDuration: autoLogoutDuration,
+        warningDuration: enableLogoutWarning ? 5000 : 0,
+        onLogout: () => {
+          // Show logout notification
+          const logoutNotification = document.createElement('div');
+          logoutNotification.className = 'notification logout-notification';
+          logoutNotification.innerHTML = `
+            <div class="notification-content">
+              <div class="notification-title">Auto Logout</div>
+              <div class="notification-message">You've been logged out due to inactivity</div>
+            </div>
+          `;
+          document.body.appendChild(logoutNotification);
+          
+          // Redirect after a brief delay to show notification
+          setTimeout(() => {
+            window.location.href = 'index.html';
+          }, 1500);
+        },
+        onWarning: () => {
+          // Play a notification sound if warning is enabled
+          if (enableLogoutWarning) {
+            const audio = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==');
+            audio.play().catch(e => console.log('Audio play failed', e));
+          }
+        }
+      });
+    } else {
+      // Update settings for existing instance
+      autoLogout.timeoutDuration = autoLogoutDuration;
+      autoLogout.warningDuration = enableLogoutWarning ? 5000 : 0;
+    }
+    
+    // Start or stop monitoring based on settings
+    if (enableAutoLogout && faceAuthActive) {
+      autoLogout.startMonitoring();
+    } else if (autoLogout.monitoring) {
+      autoLogout.stopMonitoring();
+    }
+  }
+  
+  // Auto Logout settings change handlers
+  document.getElementById('enableAutoLogout').addEventListener('change', initAutoLogout);
+  document.getElementById('autoLogoutDuration').addEventListener('change', initAutoLogout);
+  document.getElementById('enableLogoutWarning').addEventListener('change', initAutoLogout);
+  
+  // Face authentication
+  if (startFaceAuthButton) {
+    startFaceAuthButton.addEventListener('click', async function() {
+      if (faceAuthActive) {
+        // Stop face authentication
+        if (faceStream) {
+          faceStream.getTracks().forEach(track => track.stop());
+          faceStream = null;
+        }
+        
+        if (faceDetectionInterval) {
+          clearInterval(faceDetectionInterval);
+          faceDetectionInterval = null;
+        }
+        
+        faceAuthActive = false;
+        faceStatus.textContent = 'Camera Off';
+        faceStatus.parentElement.parentElement.classList.remove('active');
+        startFaceAuthButton.innerHTML = '<i class="fas fa-play"></i> Start';
+        
+        // Stop auto logout monitoring if face auth is stopped
+        if (autoLogout && autoLogout.monitoring) {
+          autoLogout.stopMonitoring();
+        }
+      } else {
+        // Start face authentication
+        try {
+          faceStream = await navigator.mediaDevices.getUserMedia({ 
+            video: { 
+              width: { ideal: 640 },
+              height: { ideal: 480 },
+              facingMode: 'user'
+            } 
+          });
+          
+          if (faceVideo) {
+            faceVideo.srcObject = faceStream;
+          }
+          
+          faceAuthActive = true;
+          faceStatus.textContent = 'Authenticating...';
+          faceStatus.parentElement.parentElement.classList.add('active');
+          startFaceAuthButton.innerHTML = '<i class="fas fa-stop"></i> Stop';
+          
+          // Simulate face detection (in a real app, this would use a face detection library)
+          let consecutiveNoFaceFrames = 0;
+          faceDetectionInterval = setInterval(() => {
+            // Simulate face detection with random confidence
+            // In a real app, this would use a real face detection algorithm
+            const faceDetected = Math.random() > 0.2; // 80% chance of detecting a face
+            
+            if (faceDetected) {
+              consecutiveNoFaceFrames = 0;
+              const confidenceScore = 70 + Math.random() * 30; // Random between 70-100
+              faceConfidence.style.width = confidenceScore + '%';
+              faceConfidenceValue.textContent = Math.round(confidenceScore) + '%';
+              
+              // Update status
+              faceStatus.textContent = 'Face Detected';
+              faceStatus.parentElement.parentElement.classList.add('success');
+              faceStatus.parentElement.parentElement.classList.remove('warning', 'danger');
+              
+              // Update last verified time
+              document.getElementById('last-verified-time').textContent = 'Just now';
+              
+              // Update auto logout - user is present
+              if (autoLogout) {
+                autoLogout.userDetected();
+              }
+            } else {
+              consecutiveNoFaceFrames++;
+              
+              if (consecutiveNoFaceFrames >= 3) {
+                // No face for several consecutive frames
+                const confidenceScore = Math.max(0, 70 - (consecutiveNoFaceFrames * 10));
+                faceConfidence.style.width = confidenceScore + '%';
+                faceConfidenceValue.textContent = Math.round(confidenceScore) + '%';
+                
+                // Update status based on how long no face has been detected
+                if (consecutiveNoFaceFrames >= 10) {
+                  faceStatus.textContent = 'No Face Detected!';
+                  faceStatus.parentElement.parentElement.classList.add('danger');
+                  faceStatus.parentElement.parentElement.classList.remove('success', 'warning');
+                } else if (consecutiveNoFaceFrames >= 5) {
+                  faceStatus.textContent = 'Face Lost';
+                  faceStatus.parentElement.parentElement.classList.add('warning');
+                  faceStatus.parentElement.parentElement.classList.remove('success', 'danger');
+                }
+                
+                // Update auto logout - user is absent
+                if (autoLogout) {
+                  autoLogout.userAbsent();
+                }
+              }
+            }
+          }, 1000);
+          
+          // Initialize auto logout if enabled
+          if (document.getElementById('enableAutoLogout').checked) {
+            initAutoLogout();
+          }
+        } catch (error) {
+          console.error('Error accessing the camera:', error);
+          alert('Unable to access the camera. Please make sure you have granted camera permissions.');
+        }
       }
     });
   }
   
-  // Analytics chart initialization
-  const chartCanvas = document.getElementById('authChart');
-  
-  if (chartCanvas && typeof Chart !== 'undefined') {
-    const ctx = chartCanvas.getContext('2d');
-    
-    const authChart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-        datasets: [
-          {
-            label: 'Face Authentication',
-            data: [5, 7, 4, 6, 8, 3, 5],
-            borderColor: '#3b82f6',
-            backgroundColor: 'rgba(59, 130, 246, 0.1)',
-            tension: 0.4,
-            fill: true
-          },
-          {
-            label: 'Voice Authentication',
-            data: [3, 5, 2, 4, 6, 2, 3],
-            borderColor: '#8b5cf6',
-            backgroundColor: 'rgba(139, 92, 246, 0.1)',
-            tension: 0.4,
-            fill: true
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            position: 'top',
-          },
-          tooltip: {
-            mode: 'index',
-            intersect: false
-          }
-        },
-        scales: {
-          y: {
-            beginAtZero: true,
-            title: {
-              display: true,
-              text: 'Authentication Count'
+  // Voice authentication
+  if (startVoiceAuthButton) {
+    startVoiceAuthButton.addEventListener('click', async function() {
+      if (voiceAuthActive) {
+        // Stop voice authentication
+        if (voiceStream) {
+          voiceStream.getTracks().forEach(track => track.stop());
+          voiceStream = null;
+        }
+        
+        if (audioContext) {
+          audioContext.close();
+          audioContext = null;
+        }
+        
+        if (animationFrameId) {
+          cancelAnimationFrame(animationFrameId);
+          animationFrameId = null;
+        }
+        
+        voiceAuthActive = false;
+        voiceStatus.textContent = 'Microphone Off';
+        voiceStatus.parentElement.parentElement.classList.remove('active');
+        startVoiceAuthButton.innerHTML = '<i class="fas fa-microphone"></i> Start';
+      } else {
+        // Start voice authentication
+        try {
+          voiceStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          
+          audioContext = new (window.AudioContext || window.webkitAudioContext)();
+          analyser = audioContext.createAnalyser();
+          const microphone = audioContext.createMediaStreamSource(voiceStream);
+          microphone.connect(analyser);
+          
+          analyser.fftSize = 256;
+          const bufferLength = analyser.frequencyBinCount;
+          const dataArray = new Uint8Array(bufferLength);
+          
+          const canvas = voiceCanvas;
+          const canvasCtx = canvas.getContext('2d');
+          canvas.width = canvas.offsetWidth;
+          canvas.height = canvas.offsetHeight;
+          
+          function drawVoiceVisualization() {
+            animationFrameId = requestAnimationFrame(drawVoiceVisualization);
+            
+            analyser.getByteFrequencyData(dataArray);
+            
+            canvasCtx.fillStyle = 'rgb(20, 20, 30)';
+            canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            const barWidth = (canvas.width / bufferLength) * 2.5;
+            let barHeight;
+            let x = 0;
+            
+            // Calculate average volume level for voice detection
+            let sum = 0;
+            for (let i = 0; i < bufferLength; i++) {
+              sum += dataArray[i];
+            }
+            const average = sum / bufferLength;
+            
+            // Update voice confidence based on volume
+            const confidenceScore = Math.min(100, average * 1.5);
+            voiceConfidence.style.width = confidenceScore + '%';
+            voiceConfidenceValue.textContent = Math.round(confidenceScore) + '%';
+            
+            // Update status based on confidence
+            if (confidenceScore > 60) {
+              voiceStatus.textContent = 'Voice Detected';
+              voiceStatus.parentElement.parentElement.classList.add('success');
+              voiceStatus.parentElement.parentElement.classList.remove('warning', 'danger');
+            } else if (confidenceScore > 30) {
+              voiceStatus.textContent = 'Low Voice';
+              voiceStatus.parentElement.parentElement.classList.add('warning');
+              voiceStatus.parentElement.parentElement.classList.remove('success', 'danger');
+            } else {
+              voiceStatus.textContent = 'No Voice';
+              voiceStatus.parentElement.parentElement.classList.add('danger');
+              voiceStatus.parentElement.parentElement.classList.remove('success', 'warning');
+            }
+            
+            // Draw the visualization bars
+            for (let i = 0; i < bufferLength; i++) {
+              barHeight = dataArray[i] / 2;
+              
+              canvasCtx.fillStyle = `rgb(${Math.min(255, barHeight + 100)}, ${Math.min(255, barHeight * 2)}, 255)`;
+              canvasCtx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+              
+              x += barWidth + 1;
             }
           }
+          
+          drawVoiceVisualization();
+          
+          voiceAuthActive = true;
+          voiceStatus.textContent = 'Listening...';
+          voiceStatus.parentElement.parentElement.classList.add('active');
+          startVoiceAuthButton.innerHTML = '<i class="fas fa-stop"></i> Stop';
+        } catch (error) {
+          console.error('Error accessing the microphone:', error);
+          alert('Unable to access the microphone. Please make sure you have granted microphone permissions.');
         }
       }
     });
-    
-    // Handle timeframe buttons
-    const timeframeButtons = document.querySelectorAll('.timeframe-btn');
-    
-    timeframeButtons.forEach(button => {
-      button.addEventListener('click', function() {
-        timeframeButtons.forEach(btn => btn.classList.remove('active'));
-        this.classList.add('active');
-        
-        const timeframe = this.dataset.timeframe;
-        
-        // Update chart data based on timeframe
-        if (timeframe === 'weekly') {
-          authChart.data.labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-          authChart.data.datasets[0].data = [5, 7, 4, 6, 8, 3, 5];
-          authChart.data.datasets[1].data = [3, 5, 2, 4, 6, 2, 3];
-        } else if (timeframe === 'monthly') {
-          authChart.data.labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
-          authChart.data.datasets[0].data = [18, 25, 30, 22];
-          authChart.data.datasets[1].data = [12, 18, 20, 15];
-        }
-        
-        authChart.update();
-      });
-    });
   }
   
-  // Handle notification button
-  const notificationBtn = document.querySelector('.notification-btn');
-  
-  if (notificationBtn) {
-    notificationBtn.addEventListener('click', function() {
-      alert('Notifications feature will be implemented in the future');
-    });
-  }
-  
-  // Simulate periodic security checks
-  function simulateSecurityCheck() {
-    const securityIndicator = document.querySelector('.status-indicator');
-    
-    if (securityIndicator) {
-      securityIndicator.classList.remove('secure');
-      securityIndicator.classList.add('checking');
-      securityIndicator.textContent = 'Checking...';
+  // "Run Verification" button
+  const runVerificationButton = document.getElementById('runVerification');
+  if (runVerificationButton) {
+    runVerificationButton.addEventListener('click', function() {
+      // Simulate a verification process
+      runVerificationButton.disabled = true;
+      runVerificationButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
       
-      setTimeout(function() {
-        securityIndicator.classList.remove('checking');
-        securityIndicator.classList.add('secure');
-        securityIndicator.textContent = 'Secure';
+      setTimeout(() => {
+        // Update last verified time
+        document.getElementById('last-verified-time').textContent = 'Just now';
+        
+        // Update UI
+        runVerificationButton.disabled = false;
+        runVerificationButton.innerHTML = '<i class="fas fa-sync-alt"></i> Verify Now';
+        
+        // Show a toast notification
+        showNotification('Verification Complete', 'Your identity has been successfully verified.', 'success');
       }, 2000);
-    }
+    });
   }
   
-  // Run security check every 5 minutes
-  setInterval(simulateSecurityCheck, 300000);
+  // Auto logout settings panel toggle
+  const sidebarAutoLogout = document.getElementById('sidebar-auto-logout');
+  const autoLogoutSettings = document.getElementById('autoLogoutSettings');
   
-  // Add a random activity to the log
-  function addRandomActivity() {
-    const activityList = document.querySelector('.activity-list');
-    
-    if (!activityList) return;
-    
-    const activities = [
-      {
-        type: 'success',
-        title: 'Continuous Authentication',
-        description: 'Face verification successful',
-        device: 'MacBook Pro'
-      },
-      {
-        type: 'success',
-        title: 'Continuous Authentication',
-        description: 'Voice verification successful',
-        device: 'MacBook Pro'
-      },
-      {
-        type: 'warning',
-        title: 'Face Verification Delay',
-        description: 'Poor lighting conditions detected',
-        device: 'MacBook Pro'
+  if (sidebarAutoLogout && autoLogoutSettings) {
+    sidebarAutoLogout.addEventListener('click', function(e) {
+      e.preventDefault();
+      autoLogoutSettings.classList.toggle('visible');
+      
+      // Scroll to settings if they're now visible
+      if (autoLogoutSettings.classList.contains('visible')) {
+        autoLogoutSettings.scrollIntoView({ behavior: 'smooth' });
       }
-    ];
-    
-    const randomActivity = activities[Math.floor(Math.random() * activities.length)];
-    const now = new Date();
-    const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    
-    const activityItem = document.createElement('div');
-    activityItem.className = 'activity-item';
-    activityItem.innerHTML = `
-      <div class="activity-icon ${randomActivity.type}">
-        <i class="fas fa-${randomActivity.type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
-      </div>
-      <div class="activity-details">
-        <h4>${randomActivity.title}</h4>
-        <p>${randomActivity.description}</p>
-        <span class="activity-time">Just now, ${timeString}</span>
-      </div>
-      <div class="activity-meta">
-        <span class="activity-device">
-          <i class="fas fa-laptop"></i> ${randomActivity.device}
-        </span>
-      </div>
-    `;
-    
-    // Add to the beginning of the list
-    activityList.prepend(activityItem);
-    
-    // Remove the last item if there are more than 4
-    if (activityList.children.length > 4) {
-      activityList.removeChild(activityList.lastElementChild);
-    }
+    });
   }
-  
-  // Simulate random activities every 20-30 seconds
-  function scheduleRandomActivity() {
-    const randomDelay = Math.floor(Math.random() * (30000 - 20000 + 1)) + 20000;
-    
-    setTimeout(function() {
-      addRandomActivity();
-      scheduleRandomActivity();
-    }, randomDelay);
-  }
-  
-  // Start the random activity simulation
-  scheduleRandomActivity();
 });
+
+// Update date and time
+function updateDateTime() {
+  const now = new Date();
+  
+  // Update date
+  const dateElement = document.getElementById('current-date');
+  if (dateElement) {
+    dateElement.textContent = now.toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  }
+  
+  // Update time
+  const timeElement = document.getElementById('current-time');
+  if (timeElement) {
+    timeElement.textContent = now.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
+  }
+}
+
+// Show notification
+function showNotification(title, message, type = 'info') {
+  const notification = document.createElement('div');
+  notification.className = `notification ${type}-notification`;
+  notification.innerHTML = `
+    <div class="notification-content">
+      <div class="notification-title">${title}</div>
+      <div class="notification-message">${message}</div>
+    </div>
+  `;
+  
+  document.body.appendChild(notification);
+  
+  // Remove notification after a delay
+  setTimeout(() => {
+    notification.classList.add('fade-out');
+    setTimeout(() => {
+      notification.remove();
+    }, 300);
+  }, 3000);
+}
