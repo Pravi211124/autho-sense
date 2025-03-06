@@ -1,0 +1,266 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - AuthoSense</title>
+    <meta name="description" content="AuthoSense Dashboard" />
+    <link rel="stylesheet" href="styles.css" />
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <!-- Chart.js for analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+
+  <body class="dashboard-body">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="logo">AuthoSense</a>
+        <button class="sidebar-toggle" id="sidebarToggle">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <ul>
+          <li class="nav-item active">
+            <a href="dashboard.html">
+              <i class="fas fa-home"></i>
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#">
+              <i class="fas fa-shield-alt"></i>
+              <span>Security</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#">
+              <i class="fas fa-history"></i>
+              <span>Activity</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#">
+              <i class="fas fa-cog"></i>
+              <span>Settings</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#">
+              <i class="fas fa-question-circle"></i>
+              <span>Help</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-info">
+          <div class="user-avatar">
+            <img src="https://i.pravatar.cc/150?img=9" alt="User Avatar">
+          </div>
+          <div class="user-details">
+            <p class="user-name">Jane Doe</p>
+            <p class="user-email">jane@example.com</p>
+          </div>
+        </div>
+        <button class="logout-btn" id="logoutBtn">
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Log Out</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="dashboard-header">
+        <h1>Dashboard</h1>
+        <div class="header-actions">
+          <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Search...">
+          </div>
+          <div class="notifications">
+            <button class="notification-btn">
+              <i class="fas fa-bell"></i>
+              <span class="notification-badge">3</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <div class="dashboard-overview">
+        <div class="overview-card security-status">
+          <div class="card-header">
+            <h3>Security Status</h3>
+            <span class="status-indicator secure">Secure</span>
+          </div>
+          <div class="security-level">
+            <div class="security-meter">
+              <div class="meter-label">Current Security Level</div>
+              <div class="meter-bar">
+                <div class="meter-fill high" style="width: 90%"></div>
+              </div>
+              <div class="meter-value">90%</div>
+            </div>
+          </div>
+          <div class="authentication-methods">
+            <div class="auth-method active">
+              <i class="fas fa-user-lock"></i>
+              <div class="auth-method-details">
+                <h4>Password</h4>
+                <p>Last updated: 7 days ago</p>
+              </div>
+              <span class="auth-status">Active</span>
+            </div>
+            <div class="auth-method active">
+              <i class="fas fa-camera"></i>
+              <div class="auth-method-details">
+                <h4>Face Recognition</h4>
+                <p>Last verified: 5 minutes ago</p>
+              </div>
+              <span class="auth-status">Active</span>
+            </div>
+            <div class="auth-method active">
+              <i class="fas fa-microphone-alt"></i>
+              <div class="auth-method-details">
+                <h4>Voice Recognition</h4>
+                <p>Last verified: 10 minutes ago</p>
+              </div>
+              <span class="auth-status">Active</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="overview-cards">
+          <div class="overview-card">
+            <div class="card-icon">
+              <i class="fas fa-shield-check"></i>
+            </div>
+            <div class="card-content">
+              <h3>Authentication Attempts</h3>
+              <p class="card-value">28</p>
+              <p class="card-trend positive">+4% from last week</p>
+            </div>
+          </div>
+          
+          <div class="overview-card">
+            <div class="card-icon">
+              <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="card-content">
+              <h3>Security Alerts</h3>
+              <p class="card-value">2</p>
+              <p class="card-trend negative">+1 from last week</p>
+            </div>
+          </div>
+          
+          <div class="overview-card">
+            <div class="card-icon">
+              <i class="fas fa-laptop"></i>
+            </div>
+            <div class="card-content">
+              <h3>Active Devices</h3>
+              <p class="card-value">3</p>
+              <p class="card-trend neutral">No change</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-panels">
+        <div class="dashboard-panel activity-log">
+          <div class="panel-header">
+            <h3>Recent Authentication Activity</h3>
+            <button class="panel-action">View All</button>
+          </div>
+          <div class="activity-list">
+            <div class="activity-item">
+              <div class="activity-icon success">
+                <i class="fas fa-check-circle"></i>
+              </div>
+              <div class="activity-details">
+                <h4>Successful Login</h4>
+                <p>Face and voice authentication verified</p>
+                <span class="activity-time">Today, 10:45 AM</span>
+              </div>
+              <div class="activity-meta">
+                <span class="activity-device">
+                  <i class="fas fa-laptop"></i> MacBook Pro
+                </span>
+              </div>
+            </div>
+            
+            <div class="activity-item">
+              <div class="activity-icon success">
+                <i class="fas fa-check-circle"></i>
+              </div>
+              <div class="activity-details">
+                <h4>Continuous Authentication</h4>
+                <p>Face verification successful</p>
+                <span class="activity-time">Today, 10:15 AM</span>
+              </div>
+              <div class="activity-meta">
+                <span class="activity-device">
+                  <i class="fas fa-laptop"></i> MacBook Pro
+                </span>
+              </div>
+            </div>
+            
+            <div class="activity-item">
+              <div class="activity-icon warning">
+                <i class="fas fa-exclamation-circle"></i>
+              </div>
+              <div class="activity-details">
+                <h4>Voice Verification Delay</h4>
+                <p>Background noise detected during verification</p>
+                <span class="activity-time">Today, 9:32 AM</span>
+              </div>
+              <div class="activity-meta">
+                <span class="activity-device">
+                  <i class="fas fa-laptop"></i> MacBook Pro
+                </span>
+              </div>
+            </div>
+            
+            <div class="activity-item">
+              <div class="activity-icon success">
+                <i class="fas fa-check-circle"></i>
+              </div>
+              <div class="activity-details">
+                <h4>Successful Login</h4>
+                <p>Face and voice authentication verified</p>
+                <span class="activity-time">Yesterday, 5:45 PM</span>
+              </div>
+              <div class="activity-meta">
+                <span class="activity-device">
+                  <i class="fas fa-mobile-alt"></i> iPhone 13
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-panel analytics">
+          <div class="panel-header">
+            <h3>Authentication Analytics</h3>
+            <div class="timeframe-selector">
+              <button class="timeframe-btn active" data-timeframe="weekly">Weekly</button>
+              <button class="timeframe-btn" data-timeframe="monthly">Monthly</button>
+            </div>
+          </div>
+          <div class="analytics-chart">
+            <canvas id="authChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- JavaScript -->
+    <script src="dashboard.js"></script>
+  </body>
+</html>

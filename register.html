@@ -1,0 +1,231 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register - AuthoSense</title>
+    <meta name="description" content="Register for AuthoSense Continuous Authentication" />
+    <link rel="stylesheet" href="styles.css" />
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  </head>
+
+  <body>
+    <!-- Navbar -->
+    <nav id="navbar" class="navbar">
+      <div class="container">
+        <a href="index.html" class="logo">AuthoSense</a>
+        <div class="nav-links">
+          <a href="index.html#about">About</a>
+          <a href="index.html#features">Features</a>
+          <a href="index.html#pricing">Pricing</a>
+          <a href="index.html" class="btn btn-outline">Home</a>
+        </div>
+        <button class="menu-toggle" id="menuToggle">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Registration Section -->
+    <section class="auth-section">
+      <div class="container">
+        <div class="auth-card">
+          <div class="auth-steps">
+            <div class="auth-step active" id="step1">
+              <div class="step-number">1</div>
+              <div class="step-content">
+                <h3>Create Account</h3>
+                <p>Basic information</p>
+              </div>
+            </div>
+            <div class="auth-step" id="step2">
+              <div class="step-number">2</div>
+              <div class="step-content">
+                <h3>Face Authentication</h3>
+                <p>Setup facial recognition</p>
+              </div>
+            </div>
+            <div class="auth-step" id="step3">
+              <div class="step-number">3</div>
+              <div class="step-content">
+                <h3>Voice Authentication</h3>
+                <p>Setup voice recognition</p>
+              </div>
+            </div>
+            <div class="auth-step" id="step4">
+              <div class="step-number">4</div>
+              <div class="step-content">
+                <h3>Complete</h3>
+                <p>All set up!</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 1: Account Creation Form -->
+          <div class="auth-form active" id="accountForm">
+            <h2>Create Your Account</h2>
+            <p class="form-description">Fill in your details to get started with AuthoSense</p>
+            
+            <form id="registerForm">
+              <div class="form-group">
+                <label for="fullName">Full Name</label>
+                <input type="text" id="fullName" required>
+              </div>
+              
+              <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" required>
+              </div>
+              
+              <div class="form-group">
+                <label for="password">Password</label>
+                <div class="password-input">
+                  <input type="password" id="password" required>
+                  <button type="button" class="toggle-password">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <div class="password-input">
+                  <input type="password" id="confirmPassword" required>
+                  <button type="button" class="toggle-password">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                </div>
+              </div>
+              
+              <div class="form-group checkbox-group">
+                <input type="checkbox" id="termsAgreement" required>
+                <label for="termsAgreement">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+              </div>
+              
+              <button type="submit" class="btn btn-primary btn-full">Continue to Face Authentication</button>
+            </form>
+            
+            <div class="auth-alt">
+              <p>Already have an account? <a href="#" id="loginLink">Log In</a></p>
+            </div>
+          </div>
+
+          <!-- Step 2: Face Authentication -->
+          <div class="auth-form" id="faceAuthForm">
+            <h2>Face Authentication Setup</h2>
+            <p class="form-description">Position your face in the frame and follow the instructions</p>
+            
+            <div class="face-auth-container">
+              <div class="webcam-container">
+                <video id="faceCam" autoplay playsinline></video>
+                <div class="face-overlay">
+                  <div class="face-guide"></div>
+                </div>
+                <div class="capture-status" id="faceStatus">Ready to scan</div>
+              </div>
+              
+              <div class="instructions">
+                <h4>Instructions:</h4>
+                <ul>
+                  <li>Ensure you're in a well-lit area</li>
+                  <li>Remove glasses or other face coverings</li>
+                  <li>Look directly at the camera</li>
+                  <li>Keep your face within the guide</li>
+                </ul>
+              </div>
+            </div>
+            
+            <div class="action-buttons">
+              <button class="btn btn-outline" id="backToAccountBtn">Back</button>
+              <button class="btn btn-primary" id="startFaceScanBtn">Start Scan</button>
+            </div>
+          </div>
+
+          <!-- Step 3: Voice Authentication -->
+          <div class="auth-form" id="voiceAuthForm">
+            <h2>Voice Authentication Setup</h2>
+            <p class="form-description">Record your voice to set up voice authentication</p>
+            
+            <div class="voice-auth-container">
+              <div class="microphone-container">
+                <div class="microphone-icon">
+                  <i class="fas fa-microphone"></i>
+                </div>
+                <div class="voice-waves" id="voiceWaves">
+                  <div class="wave"></div>
+                  <div class="wave"></div>
+                  <div class="wave"></div>
+                  <div class="wave"></div>
+                  <div class="wave"></div>
+                </div>
+                <div class="capture-status" id="voiceStatus">Click to start recording</div>
+              </div>
+              
+              <div class="passphrase-container">
+                <h4>Please say the following phrase:</h4>
+                <div class="passphrase">"My voice is my passport, verify me."</div>
+              </div>
+            </div>
+            
+            <div class="action-buttons">
+              <button class="btn btn-outline" id="backToFaceBtn">Back</button>
+              <button class="btn btn-primary" id="startVoiceRecordBtn">Start Recording</button>
+            </div>
+          </div>
+
+          <!-- Step 4: Completion -->
+          <div class="auth-form" id="completionForm">
+            <div class="completion-content">
+              <div class="completion-icon">
+                <i class="fas fa-check-circle"></i>
+              </div>
+              <h2>Setup Complete!</h2>
+              <p>Your authentication methods have been successfully set up.</p>
+              
+              <div class="security-summary">
+                <div class="security-level">
+                  <h4>Security Level</h4>
+                  <div class="security-meter">
+                    <div class="security-indicator high"></div>
+                    <span>High</span>
+                  </div>
+                </div>
+                
+                <div class="auth-methods">
+                  <div class="auth-method">
+                    <i class="fas fa-user-check"></i>
+                    <span>Password</span>
+                  </div>
+                  <div class="auth-method">
+                    <i class="fas fa-camera"></i>
+                    <span>Face Authentication</span>
+                  </div>
+                  <div class="auth-method">
+                    <i class="fas fa-microphone-alt"></i>
+                    <span>Voice Authentication</span>
+                  </div>
+                </div>
+              </div>
+              
+              <button class="btn btn-primary btn-full" id="gotoDashboardBtn">Go to Dashboard</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-bottom">
+          <p>&copy; <span id="current-year"></span> AuthoSense. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="register.js"></script>
+  </body>
+</html>

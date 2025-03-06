@@ -1,18 +1,221 @@
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>autho-sense</title>
-    <meta name="description" content="Lovable Generated Project" />
-    <meta name="author" content="Lovable" />
-    <meta property="og:image" content="/og-image.png" />
+    <title>AuthoSense - Continuous Authentication</title>
+    <meta name="description" content="Continuous Authentication with Face and Voice Recognition" />
+    <link rel="stylesheet" href="styles.css" />
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   </head>
 
   <body>
-    <div id="root"></div>
-    <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
-    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
-    <script type="module" src="/src/main.tsx"></script>
+    <!-- Navbar -->
+    <nav id="navbar" class="navbar">
+      <div class="container">
+        <a href="index.html" class="logo">AuthoSense</a>
+        <div class="nav-links">
+          <a href="#about">About</a>
+          <a href="#features">Features</a>
+          <a href="#pricing">Pricing</a>
+          <a href="register.html" class="btn btn-primary">Get Started</a>
+          <button class="btn btn-outline" id="demoButton">Try Demo</button>
+        </div>
+        <button class="menu-toggle" id="menuToggle">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="container">
+        <div class="hero-content">
+          <span class="badge">Next Generation Security</span>
+          <h1>Continuous Authentication with <span class="highlight">Face and Voice</span> Recognition</h1>
+          <p>Move beyond passwords with a sophisticated system that continuously verifies identity through biometric markers, creating a seamless yet secure user experience.</p>
+          <div class="cta-buttons">
+            <a href="register.html" class="btn btn-primary">Get Started <i class="fas fa-arrow-right"></i></a>
+            <button class="btn btn-outline" id="demoButtonHero">Try Demo</button>
+          </div>
+        </div>
+        <div class="hero-image">
+          <div class="dashboard-preview">
+            <div class="dashboard-header">
+              <div class="dashboard-icon">
+                <i class="fas fa-shield-alt"></i>
+              </div>
+              <div class="dashboard-title">
+                <h3>AuthoSense</h3>
+                <p>Continuous Authentication</p>
+              </div>
+              <div class="dashboard-status">
+                <div class="status-dot"></div>
+                <div class="status-text">Secure</div>
+              </div>
+            </div>
+            <div class="dashboard-body">
+              <div class="auth-item">
+                <div class="auth-item-header">
+                  <div>Face Authentication</div>
+                  <div class="verified">Verified</div>
+                </div>
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: 100%"></div>
+                </div>
+              </div>
+              <div class="auth-item">
+                <div class="auth-item-header">
+                  <div>Voice Authentication</div>
+                  <div class="verified">Verified</div>
+                </div>
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: 92%"></div>
+                </div>
+              </div>
+            </div>
+            <div class="dashboard-footer">
+              <div>Last verified: Just now</div>
+              <button class="btn btn-small">Details</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+      <div class="container">
+        <div class="section-header">
+          <span class="badge">Features</span>
+          <h2>Advanced Authentication Features</h2>
+          <p>Our system combines multiple biometric factors to create a security solution that's both highly secure and easy to use.</p>
+        </div>
+        <div class="features-grid">
+          <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+            <div class="feature-icon">
+              <i class="fas fa-video"></i>
+            </div>
+            <h3>Face Recognition</h3>
+            <p>Authenticate users with advanced facial recognition that works even in variable lighting conditions.</p>
+          </div>
+          <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+            <div class="feature-icon">
+              <i class="fas fa-microphone"></i>
+            </div>
+            <h3>Voice Biometrics</h3>
+            <p>Verify identity through voice patterns that are as unique as fingerprints.</p>
+          </div>
+          <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+            <div class="feature-icon">
+              <i class="fas fa-fingerprint"></i>
+            </div>
+            <h3>Continuous Authentication</h3>
+            <p>Maintain security with periodic checks rather than one-time logins.</p>
+          </div>
+          <div class="feature-card" data-aos="fade-up" data-aos-delay="400">
+            <div class="feature-icon">
+              <i class="fas fa-lock"></i>
+            </div>
+            <h3>Multi-factor Security</h3>
+            <p>Combine multiple verification methods for enhanced security.</p>
+          </div>
+          <div class="feature-card" data-aos="fade-up" data-aos-delay="500">
+            <div class="feature-icon">
+              <i class="fas fa-shield-alt"></i>
+            </div>
+            <h3>Privacy Focused</h3>
+            <p>All biometric data is encrypted and stored securely on your device.</p>
+          </div>
+          <div class="feature-card" data-aos="fade-up" data-aos-delay="600">
+            <div class="feature-icon">
+              <i class="fas fa-shield-virus"></i>
+            </div>
+            <h3>Frictionless Experience</h3>
+            <p>Security that doesn't get in the way of productivity.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+      <div class="container">
+        <div class="cta-content">
+          <h2>Ready to upgrade your authentication system?</h2>
+          <p>Join thousands of organizations that have already moved beyond passwords to a more secure and user-friendly authentication experience.</p>
+          <div class="cta-buttons">
+            <a href="register.html" class="btn btn-primary">Get Started <i class="fas fa-arrow-right"></i></a>
+            <a href="#" class="btn btn-outline">Contact Sales</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-col">
+            <h3>AuthoSense</h3>
+            <p>Next generation authentication for a passwordless future.</p>
+          </div>
+          <div class="footer-col">
+            <h4>Products</h4>
+            <ul>
+              <li><a href="#">Face Authentication</a></li>
+              <li><a href="#">Voice Authentication</a></li>
+              <li><a href="#">Continuous Monitoring</a></li>
+              <li><a href="#">Enterprise Solutions</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>Resources</h4>
+            <ul>
+              <li><a href="#">Documentation</a></li>
+              <li><a href="#">API Reference</a></li>
+              <li><a href="#">Blog</a></li>
+              <li><a href="#">Support</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>Company</h4>
+            <ul>
+              <li><a href="#">About Us</a></li>
+              <li><a href="#">Careers</a></li>
+              <li><a href="#">Contact</a></li>
+              <li><a href="#">Legal</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; <span id="current-year"></span> AuthoSense. All rights reserved.</p>
+          <div class="social-links">
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-github"></i></a>
+            <a href="#"><i class="fab fa-linkedin"></i></a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Scroll to top button -->
+    <button id="scrollToTop" class="scroll-top-btn">
+      <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Toast notification -->
+    <div id="toast" class="toast">
+      <div class="toast-content">
+        <div class="toast-title">Demo Mode</div>
+        <div class="toast-message">Entering demo experience with sample data.</div>
+      </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script src="scripts.js"></script>
   </body>
 </html>
