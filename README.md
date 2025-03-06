@@ -1,69 +1,54 @@
-# Welcome to your Lovable project
 
-## Project info
+# AuthoSense - Continuous Authentication System
 
-**URL**: https://lovable.dev/projects/2d82faf3-f174-4360-b290-f4284d30a309
+AuthoSense is a continuous authentication system that uses face and voice recognition to verify users' identities in real-time.
 
-## How can I edit this code?
+## Project Components
 
-There are several ways of editing your application.
+- **Frontend**: HTML, CSS, JavaScript
+- **Backend**: Python (Flask)
+- **Authentication Methods**: Face recognition, Voice recognition
+- **Features**: Auto logout when user is not in front of the camera
 
-**Use Lovable**
+## Setup Instructions
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/2d82faf3-f174-4360-b290-f4284d30a309) and start prompting.
+### Frontend
 
-Changes made via Lovable will be committed automatically to this repo.
+Simply open the `index.html` file in a web browser to access the application.
 
-**Use your preferred IDE**
+### Backend (Python)
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+1. Install Python 3.7 or higher.
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+2. Install required packages:
+   ```
+   pip install -r requirements.txt
+   ```
 
-Follow these steps:
+3. Run the Flask server:
+   ```
+   python app.py
+   ```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+The server will run on `http://localhost:5000`.
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+### System Requirements
 
-# Step 3: Install the necessary dependencies.
-npm i
+- Python 3.7+
+- Modern web browser (Chrome, Firefox, Edge)
+- Webcam for face recognition
+- Microphone for voice recognition
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+## Usage
 
-**Edit a file directly in GitHub**
+1. Register a new account with face and voice samples
+2. Log in using face recognition
+3. Dashboard will continuously monitor your presence
+4. System will automatically log you out when you're not in front of the camera
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Security Features
 
-**Use GitHub Codespaces**
+- Continuous authentication using biometric data
+- Auto-logout functionality for enhanced security
+- Multi-factor authentication (face + voice)
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with .
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/2d82faf3-f174-4360-b290-f4284d30a309) and click on Share -> Publish.
-
-## I want to use a custom domain - is that possible?
-
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
