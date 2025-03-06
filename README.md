@@ -51,4 +51,3 @@ The server will run on `http://localhost:5000`.
 - Continuous authentication using biometric data
 - Auto-logout functionality for enhanced security
 - Multi-factor authentication (face + voice)
-
