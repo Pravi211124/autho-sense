@@ -41,10 +41,9 @@
           <p>Premium Account</p>
         </div>
         <ul class="sidebar-menu">
-          <li class="active"><a href="#"><i class="fas fa-tachometer-alt"></i> Overview</a></li>
-          <li><a href="#"><i class="fas fa-shield-alt"></i> Security</a></li>
-          <li><a href="#"><i class="fas fa-history"></i> Activity</a></li>
-          <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
+          <li class="active"><a href="#" data-tab="home-tab"><i class="fas fa-home"></i> Home</a></li>
+          <li><a href="#" data-tab="user-log-tab"><i class="fas fa-user-clock"></i> User Log</a></li>
+          <li><a href="#" data-tab="settings-tab"><i class="fas fa-cog"></i> Settings</a></li>
           <li><a href="#" id="sidebar-auto-logout"><i class="fas fa-sign-out-alt"></i> Auto Logout</a></li>
         </ul>
       </div>
@@ -63,150 +62,336 @@
           </div>
         </div>
         
-        <div class="dashboard-cards">
-          <div class="card auth-status">
-            <div class="card-icon success">
-              <i class="fas fa-check-circle"></i>
-            </div>
-            <div class="card-content">
-              <h3>Authentication Status</h3>
-              <p class="status-text success">Verified</p>
-              <div class="last-verified">Last verified: <span id="last-verified-time">Just now</span></div>
-            </div>
-          </div>
-          
-          <div class="card security-level">
-            <div class="card-icon warning">
-              <i class="fas fa-shield-alt"></i>
-            </div>
-            <div class="card-content">
-              <h3>Security Level</h3>
-              <div class="security-meter">
-                <div class="security-bar">
-                  <div class="security-fill" style="width: 80%"></div>
-                </div>
-                <div class="security-rating">80%</div>
+        <!-- Home Tab Content -->
+        <div id="home-content">
+          <div class="dashboard-cards">
+            <div class="card auth-status">
+              <div class="card-icon success">
+                <i class="fas fa-check-circle"></i>
               </div>
-              <p>Strong security - 2 factors enabled</p>
+              <div class="card-content">
+                <h3>Authentication Status</h3>
+                <p class="status-text success">Verified</p>
+                <div class="last-verified">Last verified: <span id="last-verified-time">Just now</span></div>
+              </div>
+            </div>
+            
+            <div class="card security-level">
+              <div class="card-icon warning">
+                <i class="fas fa-shield-alt"></i>
+              </div>
+              <div class="card-content">
+                <h3>Security Level</h3>
+                <div class="security-meter">
+                  <div class="security-bar">
+                    <div class="security-fill" style="width: 80%"></div>
+                  </div>
+                  <div class="security-rating">80%</div>
+                </div>
+                <p>Strong security - 2 factors enabled</p>
+              </div>
+            </div>
+            
+            <div class="card auth-factors">
+              <div class="card-icon info">
+                <i class="fas fa-key"></i>
+              </div>
+              <div class="card-content">
+                <h3>Active Factors</h3>
+                <ul class="factors-list">
+                  <li><i class="fas fa-check"></i> Face Recognition</li>
+                  <li><i class="fas fa-check"></i> Voice Authentication</li>
+                  <li class="disabled"><i class="fas fa-times"></i> Device Fingerprint</li>
+                </ul>
+              </div>
             </div>
           </div>
           
-          <div class="card auth-factors">
-            <div class="card-icon info">
-              <i class="fas fa-key"></i>
+          <div class="auth-monitors">
+            <div class="monitor-card face-monitor">
+              <h3>Face Recognition</h3>
+              <div class="video-container">
+                <video id="faceVideo" autoplay muted playsinline></video>
+                <div class="video-overlay">
+                  <div class="status-indicator">
+                    <div class="indicator-dot"></div>
+                    <span id="faceStatus">Camera Off</span>
+                  </div>
+                </div>
+              </div>
+              <div class="monitor-actions">
+                <button class="btn btn-primary" id="startFaceAuth">
+                  <i class="fas fa-play"></i> Start
+                </button>
+                <div class="confidence">
+                  <span>Confidence:</span>
+                  <div class="confidence-meter">
+                    <div class="confidence-bar">
+                      <div id="faceConfidence" class="confidence-fill" style="width: 0%"></div>
+                    </div>
+                    <span id="faceConfidenceValue">0%</span>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="card-content">
-              <h3>Active Factors</h3>
-              <ul class="factors-list">
-                <li><i class="fas fa-check"></i> Face Recognition</li>
-                <li><i class="fas fa-check"></i> Voice Authentication</li>
-                <li class="disabled"><i class="fas fa-times"></i> Device Fingerprint</li>
-              </ul>
+            
+            <div class="monitor-card voice-monitor">
+              <h3>Voice Authentication</h3>
+              <div class="voice-visualization">
+                <canvas id="voiceCanvas"></canvas>
+                <div class="visualization-overlay">
+                  <div class="status-indicator">
+                    <div class="indicator-dot"></div>
+                    <span id="voiceStatus">Microphone Off</span>
+                  </div>
+                </div>
+              </div>
+              <div class="monitor-actions">
+                <button class="btn btn-primary" id="startVoiceAuth">
+                  <i class="fas fa-microphone"></i> Start
+                </button>
+                <div class="confidence">
+                  <span>Confidence:</span>
+                  <div class="confidence-meter">
+                    <div class="confidence-bar">
+                      <div id="voiceConfidence" class="confidence-fill" style="width: 0%"></div>
+                    </div>
+                    <span id="voiceConfidenceValue">0%</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
         
-        <div class="auth-monitors">
-          <div class="monitor-card face-monitor">
-            <h3>Face Recognition</h3>
-            <div class="video-container">
-              <video id="faceVideo" autoplay muted playsinline></video>
-              <div class="video-overlay">
-                <div class="status-indicator">
-                  <div class="indicator-dot"></div>
-                  <span id="faceStatus">Camera Off</span>
+        <!-- User Log Tab Content -->
+        <div id="user-log-content" style="display: none;">
+          <div class="section-header">
+            <h2><i class="fas fa-user-clock"></i> User Activity Log</h2>
+            <p>Recent authentication events and system activities</p>
+          </div>
+          
+          <div class="activity-log-container">
+            <div class="log-filters">
+              <select class="select-control">
+                <option>All Activities</option>
+                <option>Authentication Events</option>
+                <option>System Events</option>
+                <option>Security Alerts</option>
+              </select>
+              <div class="date-range">
+                <button class="btn btn-small">Today</button>
+                <button class="btn btn-small">This Week</button>
+                <button class="btn btn-small">This Month</button>
+              </div>
+            </div>
+            
+            <div class="log-entries">
+              <div class="log-entry">
+                <div class="log-icon success">
+                  <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="log-content">
+                  <div class="log-header">
+                    <h4>Face Authentication Successful</h4>
+                    <span class="log-time">Today, 10:30 AM</span>
+                  </div>
+                  <p>Face verified with 95% confidence</p>
+                </div>
+              </div>
+              
+              <div class="log-entry">
+                <div class="log-icon warning">
+                  <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="log-content">
+                  <div class="log-header">
+                    <h4>Voice Authentication Skipped</h4>
+                    <span class="log-time">Today, 10:29 AM</span>
+                  </div>
+                  <p>User skipped voice authentication step</p>
+                </div>
+              </div>
+              
+              <div class="log-entry">
+                <div class="log-icon info">
+                  <i class="fas fa-sign-in-alt"></i>
+                </div>
+                <div class="log-content">
+                  <div class="log-header">
+                    <h4>User Logged In</h4>
+                    <span class="log-time">Today, 10:28 AM</span>
+                  </div>
+                  <p>Successfully logged in from Chrome on Windows</p>
+                </div>
+              </div>
+              
+              <div class="log-entry">
+                <div class="log-icon danger">
+                  <i class="fas fa-times-circle"></i>
+                </div>
+                <div class="log-content">
+                  <div class="log-header">
+                    <h4>Auto Logout Triggered</h4>
+                    <span class="log-time">Yesterday, 3:45 PM</span>
+                  </div>
+                  <p>User absence detected. Session terminated automatically.</p>
+                </div>
+              </div>
+              
+              <div class="log-entry">
+                <div class="log-icon success">
+                  <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="log-content">
+                  <div class="log-header">
+                    <h4>Security Settings Updated</h4>
+                    <span class="log-time">Yesterday, 2:20 PM</span>
+                  </div>
+                  <p>Auto logout timeout changed to 10 seconds</p>
                 </div>
               </div>
             </div>
-            <div class="monitor-actions">
-              <button class="btn btn-primary" id="startFaceAuth">
-                <i class="fas fa-play"></i> Start
-              </button>
-              <div class="confidence">
-                <span>Confidence:</span>
-                <div class="confidence-meter">
-                  <div class="confidence-bar">
-                    <div id="faceConfidence" class="confidence-fill" style="width: 0%"></div>
-                  </div>
-                  <span id="faceConfidenceValue">0%</span>
+            
+            <div class="load-more">
+              <button class="btn btn-outline">Load More</button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Settings Tab Content -->
+        <div id="settings-tab" style="display: none;">
+          <div class="section-header">
+            <h2><i class="fas fa-cog"></i> Dashboard Settings</h2>
+            <p>Configure your security preferences and authentication methods</p>
+          </div>
+          
+          <div class="settings-section">
+            <h3>Authentication Methods</h3>
+            <div class="settings-card">
+              <div class="settings-row">
+                <div class="settings-label">
+                  <span>Face Recognition</span>
+                  <p class="settings-description">Verify identity using facial features</p>
+                </div>
+                <div class="settings-control">
+                  <label class="switch">
+                    <input type="checkbox" checked>
+                    <span class="slider round"></span>
+                  </label>
+                </div>
+              </div>
+              
+              <div class="settings-row">
+                <div class="settings-label">
+                  <span>Voice Authentication</span>
+                  <p class="settings-description">Verify identity using voice patterns</p>
+                </div>
+                <div class="settings-control">
+                  <label class="switch">
+                    <input type="checkbox" checked>
+                    <span class="slider round"></span>
+                  </label>
+                </div>
+              </div>
+              
+              <div class="settings-row">
+                <div class="settings-label">
+                  <span>Device Fingerprinting</span>
+                  <p class="settings-description">Verify identity based on your device characteristics</p>
+                </div>
+                <div class="settings-control">
+                  <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider round"></span>
+                  </label>
                 </div>
               </div>
             </div>
           </div>
           
-          <div class="monitor-card voice-monitor">
-            <h3>Voice Authentication</h3>
-            <div class="voice-visualization">
-              <canvas id="voiceCanvas"></canvas>
-              <div class="visualization-overlay">
-                <div class="status-indicator">
-                  <div class="indicator-dot"></div>
-                  <span id="voiceStatus">Microphone Off</span>
+          <!-- Auto Logout Settings Section -->
+          <div class="settings-section">
+            <h3>Auto Logout Settings</h3>
+            <div class="settings-card">
+              <div class="settings-row">
+                <div class="settings-label">
+                  <span>Enable Auto Logout</span>
+                  <p class="settings-description">Automatically log out when you're not in front of the camera</p>
+                </div>
+                <div class="settings-control">
+                  <label class="switch">
+                    <input type="checkbox" id="enableAutoLogout" checked>
+                    <span class="slider round"></span>
+                  </label>
                 </div>
               </div>
-            </div>
-            <div class="monitor-actions">
-              <button class="btn btn-primary" id="startVoiceAuth">
-                <i class="fas fa-microphone"></i> Start
-              </button>
-              <div class="confidence">
-                <span>Confidence:</span>
-                <div class="confidence-meter">
-                  <div class="confidence-bar">
-                    <div id="voiceConfidence" class="confidence-fill" style="width: 0%"></div>
-                  </div>
-                  <span id="voiceConfidenceValue">0%</span>
+              
+              <div class="settings-row">
+                <div class="settings-label">
+                  <span>Timeout Duration</span>
+                  <p class="settings-description">How long to wait before logging out</p>
+                </div>
+                <div class="settings-control">
+                  <select id="autoLogoutDuration" class="select-control">
+                    <option value="5000">5 seconds (Demo)</option>
+                    <option value="10000" selected>10 seconds</option>
+                    <option value="30000">30 seconds</option>
+                    <option value="60000">1 minute</option>
+                    <option value="300000">5 minutes</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div class="settings-row">
+                <div class="settings-label">
+                  <span>Warning Before Logout</span>
+                  <p class="settings-description">Show a warning message before automatic logout</p>
+                </div>
+                <div class="settings-control">
+                  <label class="switch">
+                    <input type="checkbox" id="enableLogoutWarning" checked>
+                    <span class="slider round"></span>
+                  </label>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        
-        <!-- Auto Logout Settings Section -->
-        <div class="settings-panel" id="autoLogoutSettings">
-          <h2><i class="fas fa-sign-out-alt"></i> Auto Logout Settings</h2>
-          <div class="settings-card">
-            <div class="settings-row">
-              <div class="settings-label">
-                <span>Enable Auto Logout</span>
-                <p class="settings-description">Automatically log out when you're not in front of the camera</p>
+          
+          <div class="settings-section">
+            <h3>Notification Settings</h3>
+            <div class="settings-card">
+              <div class="settings-row">
+                <div class="settings-label">
+                  <span>Security Alerts</span>
+                  <p class="settings-description">Get notified about security events</p>
+                </div>
+                <div class="settings-control">
+                  <label class="switch">
+                    <input type="checkbox" checked>
+                    <span class="slider round"></span>
+                  </label>
+                </div>
               </div>
-              <div class="settings-control">
-                <label class="switch">
-                  <input type="checkbox" id="enableAutoLogout" checked>
-                  <span class="slider round"></span>
-                </label>
-              </div>
-            </div>
-            
-            <div class="settings-row">
-              <div class="settings-label">
-                <span>Timeout Duration</span>
-                <p class="settings-description">How long to wait before logging out</p>
-              </div>
-              <div class="settings-control">
-                <select id="autoLogoutDuration" class="select-control">
-                  <option value="5000">5 seconds (Demo)</option>
-                  <option value="10000" selected>10 seconds</option>
-                  <option value="30000">30 seconds</option>
-                  <option value="60000">1 minute</option>
-                  <option value="300000">5 minutes</option>
-                </select>
+              
+              <div class="settings-row">
+                <div class="settings-label">
+                  <span>Authentication Updates</span>
+                  <p class="settings-description">Get notified about authentication status changes</p>
+                </div>
+                <div class="settings-control">
+                  <label class="switch">
+                    <input type="checkbox" checked>
+                    <span class="slider round"></span>
+                  </label>
+                </div>
               </div>
             </div>
-            
-            <div class="settings-row">
-              <div class="settings-label">
-                <span>Warning Before Logout</span>
-                <p class="settings-description">Show a warning message before automatic logout</p>
-              </div>
-              <div class="settings-control">
-                <label class="switch">
-                  <input type="checkbox" id="enableLogoutWarning" checked>
-                  <span class="slider round"></span>
-                </label>
-              </div>
-            </div>
+          </div>
+          
+          <div class="settings-actions">
+            <button class="btn btn-primary">Save Settings</button>
+            <button class="btn btn-outline">Reset to Defaults</button>
           </div>
         </div>
       </div>
