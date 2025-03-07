@@ -1,0 +1,135 @@
+
+<div id="settings-tab" style="display: none;">
+  <div class="section-header">
+    <h2><i class="fas fa-cog"></i> Dashboard Settings</h2>
+    <p>Configure your security preferences and authentication methods</p>
+  </div>
+  
+  <div class="settings-section">
+    <h3>Authentication Methods</h3>
+    <div class="settings-card">
+      <div class="settings-row">
+        <div class="settings-label">
+          <span>Face Recognition</span>
+          <p class="settings-description">Verify identity using facial features</p>
+        </div>
+        <div class="settings-control">
+          <label class="switch">
+            <input type="checkbox" checked>
+            <span class="slider round"></span>
+          </label>
+        </div>
+      </div>
+      
+      <div class="settings-row">
+        <div class="settings-label">
+          <span>Voice Authentication</span>
+          <p class="settings-description">Verify identity using voice patterns</p>
+        </div>
+        <div class="settings-control">
+          <label class="switch">
+            <input type="checkbox" checked>
+            <span class="slider round"></span>
+          </label>
+        </div>
+      </div>
+      
+      <div class="settings-row">
+        <div class="settings-label">
+          <span>Device Fingerprinting</span>
+          <p class="settings-description">Verify identity based on your device characteristics</p>
+        </div>
+        <div class="settings-control">
+          <label class="switch">
+            <input type="checkbox">
+            <span class="slider round"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Auto Logout Settings Section -->
+  <div class="settings-section">
+    <h3>Auto Logout Settings</h3>
+    <div class="settings-card">
+      <div class="settings-row">
+        <div class="settings-label">
+          <span>Enable Auto Logout</span>
+          <p class="settings-description">Automatically log out when you're not in front of the camera</p>
+        </div>
+        <div class="settings-control">
+          <label class="switch">
+            <input type="checkbox" id="enableAutoLogout" checked>
+            <span class="slider round"></span>
+          </label>
+        </div>
+      </div>
+      
+      <div class="settings-row">
+        <div class="settings-label">
+          <span>Timeout Duration</span>
+          <p class="settings-description">How long to wait before logging out</p>
+        </div>
+        <div class="settings-control">
+          <select id="autoLogoutDuration" class="select-control">
+            <option value="5000">5 seconds (Demo)</option>
+            <option value="10000" selected>10 seconds</option>
+            <option value="30000">30 seconds</option>
+            <option value="60000">1 minute</option>
+            <option value="300000">5 minutes</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="settings-row">
+        <div class="settings-label">
+          <span>Warning Before Logout</span>
+          <p class="settings-description">Show a warning message before automatic logout</p>
+        </div>
+        <div class="settings-control">
+          <label class="switch">
+            <input type="checkbox" id="enableLogoutWarning" checked>
+            <span class="slider round"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="settings-section">
+    <h3>Notification Settings</h3>
+    <div class="settings-card">
+      <div class="settings-row">
+        <div class="settings-label">
+          <span>Security Alerts</span>
+          <p class="settings-description">Get notified about security events</p>
+        </div>
+        <div class="settings-control">
+          <label class="switch">
+            <input type="checkbox" checked>
+            <span class="slider round"></span>
+          </label>
+        </div>
+      </div>
+      
+      <div class="settings-row">
+        <div class="settings-label">
+          <span>Authentication Updates</span>
+          <p class="settings-description">Get notified about authentication status changes</p>
+        </div>
+        <div class="settings-control">
+          <label class="switch">
+            <input type="checkbox" checked>
+            <span class="slider round"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="settings-actions">
+    <button class="btn btn-primary">Save Settings</button>
+    <button class="btn btn-outline">Reset to Defaults</button>
+  </div>
+</div>

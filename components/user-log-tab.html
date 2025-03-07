@@ -1,0 +1,94 @@
+
+<div id="user-log-content" style="display: none;">
+  <div class="section-header">
+    <h2><i class="fas fa-user-clock"></i> User Activity Log</h2>
+    <p>Recent authentication events and system activities</p>
+  </div>
+  
+  <div class="activity-log-container">
+    <div class="log-filters">
+      <select class="select-control">
+        <option>All Activities</option>
+        <option>Authentication Events</option>
+        <option>System Events</option>
+        <option>Security Alerts</option>
+      </select>
+      <div class="date-range">
+        <button class="btn btn-small">Today</button>
+        <button class="btn btn-small">This Week</button>
+        <button class="btn btn-small">This Month</button>
+      </div>
+    </div>
+    
+    <div class="log-entries">
+      <div class="log-entry">
+        <div class="log-icon success">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="log-content">
+          <div class="log-header">
+            <h4>Face Authentication Successful</h4>
+            <span class="log-time">Today, 10:30 AM</span>
+          </div>
+          <p>Face verified with 95% confidence</p>
+        </div>
+      </div>
+      
+      <div class="log-entry">
+        <div class="log-icon warning">
+          <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <div class="log-content">
+          <div class="log-header">
+            <h4>Voice Authentication Skipped</h4>
+            <span class="log-time">Today, 10:29 AM</span>
+          </div>
+          <p>User skipped voice authentication step</p>
+        </div>
+      </div>
+      
+      <div class="log-entry">
+        <div class="log-icon info">
+          <i class="fas fa-sign-in-alt"></i>
+        </div>
+        <div class="log-content">
+          <div class="log-header">
+            <h4>User Logged In</h4>
+            <span class="log-time">Today, 10:28 AM</span>
+          </div>
+          <p>Successfully logged in from Chrome on Windows</p>
+        </div>
+      </div>
+      
+      <div class="log-entry">
+        <div class="log-icon danger">
+          <i class="fas fa-times-circle"></i>
+        </div>
+        <div class="log-content">
+          <div class="log-header">
+            <h4>Auto Logout Triggered</h4>
+            <span class="log-time">Yesterday, 3:45 PM</span>
+          </div>
+          <p>User absence detected. Session terminated automatically.</p>
+        </div>
+      </div>
+      
+      <div class="log-entry">
+        <div class="log-icon success">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="log-content">
+          <div class="log-header">
+            <h4>Security Settings Updated</h4>
+            <span class="log-time">Yesterday, 2:20 PM</span>
+          </div>
+          <p>Auto logout timeout changed to 10 seconds</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="load-more">
+      <button class="btn btn-outline">Load More</button>
+    </div>
+  </div>
+</div>

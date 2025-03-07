@@ -1,0 +1,101 @@
+
+<div id="home-content">
+  <div class="dashboard-cards">
+    <div class="card auth-status">
+      <div class="card-icon success">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <div class="card-content">
+        <h3>Authentication Status</h3>
+        <p class="status-text success">Verified</p>
+        <div class="last-verified">Last verified: <span id="last-verified-time">Just now</span></div>
+      </div>
+    </div>
+    
+    <div class="card security-level">
+      <div class="card-icon warning">
+        <i class="fas fa-shield-alt"></i>
+      </div>
+      <div class="card-content">
+        <h3>Security Level</h3>
+        <div class="security-meter">
+          <div class="security-bar">
+            <div class="security-fill" style="width: 80%"></div>
+          </div>
+          <div class="security-rating">80%</div>
+        </div>
+        <p>Strong security - 2 factors enabled</p>
+      </div>
+    </div>
+    
+    <div class="card auth-factors">
+      <div class="card-icon info">
+        <i class="fas fa-key"></i>
+      </div>
+      <div class="card-content">
+        <h3>Active Factors</h3>
+        <ul class="factors-list">
+          <li><i class="fas fa-check"></i> Face Recognition</li>
+          <li><i class="fas fa-check"></i> Voice Authentication</li>
+          <li class="disabled"><i class="fas fa-times"></i> Device Fingerprint</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  
+  <div class="auth-monitors">
+    <div class="monitor-card face-monitor">
+      <h3>Face Recognition</h3>
+      <div class="video-container">
+        <video id="faceVideo" autoplay muted playsinline></video>
+        <div class="video-overlay">
+          <div class="status-indicator">
+            <div class="indicator-dot"></div>
+            <span id="faceStatus">Camera Off</span>
+          </div>
+        </div>
+      </div>
+      <div class="monitor-actions">
+        <button class="btn btn-primary" id="startFaceAuth">
+          <i class="fas fa-play"></i> Start
+        </button>
+        <div class="confidence">
+          <span>Confidence:</span>
+          <div class="confidence-meter">
+            <div class="confidence-bar">
+              <div id="faceConfidence" class="confidence-fill" style="width: 0%"></div>
+            </div>
+            <span id="faceConfidenceValue">0%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="monitor-card voice-monitor">
+      <h3>Voice Authentication</h3>
+      <div class="voice-visualization">
+        <canvas id="voiceCanvas"></canvas>
+        <div class="visualization-overlay">
+          <div class="status-indicator">
+            <div class="indicator-dot"></div>
+            <span id="voiceStatus">Microphone Off</span>
+          </div>
+        </div>
+      </div>
+      <div class="monitor-actions">
+        <button class="btn btn-primary" id="startVoiceAuth">
+          <i class="fas fa-microphone"></i> Start
+        </button>
+        <div class="confidence">
+          <span>Confidence:</span>
+          <div class="confidence-meter">
+            <div class="confidence-bar">
+              <div id="voiceConfidence" class="confidence-fill" style="width: 0%"></div>
+            </div>
+            <span id="voiceConfidenceValue">0%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
