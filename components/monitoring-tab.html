@@ -1,111 +1,88 @@
 
-<div id="monitoring-content">
-  <div class="section-header">
+<div class="monitoring-tab">
+  <div class="section-title">
     <h2>Website Monitoring</h2>
-    <p>Real-time monitoring and security analysis of your websites</p>
+    <p>Monitor the security and performance of your websites</p>
   </div>
-  
-  <div class="monitoring-grid">
-    <div class="monitor-card">
-      <div class="monitor-header">
-        <h3>AuthoSense.com</h3>
-        <span class="status-badge online">Online</span>
+
+  <div class="monitoring-dashboard">
+    <div class="monitoring-card">
+      <div class="card-header">
+        <h3>Website Uptime</h3>
+        <div class="badge success">99.9% Uptime</div>
       </div>
-      <div class="monitor-stats">
-        <div class="stat-row">
-          <div class="stat-label">Uptime</div>
-          <div class="stat-value">99.98%</div>
+      <div class="card-body">
+        <div class="uptime-chart">
+          <div class="chart-bars">
+            <div class="chart-bar" style="height: 90%"></div>
+            <div class="chart-bar" style="height: 95%"></div>
+            <div class="chart-bar" style="height: 100%"></div>
+            <div class="chart-bar" style="height: 85%"></div>
+            <div class="chart-bar" style="height: 100%"></div>
+            <div class="chart-bar" style="height: 98%"></div>
+            <div class="chart-bar" style="height: 100%"></div>
+          </div>
+          <div class="chart-labels">
+            <span>Mon</span>
+            <span>Tue</span>
+            <span>Wed</span>
+            <span>Thu</span>
+            <span>Fri</span>
+            <span>Sat</span>
+            <span>Sun</span>
+          </div>
         </div>
-        <div class="stat-row">
-          <div class="stat-label">Response Time</div>
-          <div class="stat-value">89ms</div>
-        </div>
-        <div class="stat-row">
-          <div class="stat-label">Last Checked</div>
-          <div class="stat-value">2 minutes ago</div>
-        </div>
-      </div>
-      <div class="monitor-chart">
-        <canvas id="uptimeChart1"></canvas>
-      </div>
-      <div class="monitor-actions">
-        <button class="btn btn-primary">View Details</button>
-        <button class="btn btn-outline">Configure Alerts</button>
       </div>
     </div>
-    
-    <div class="monitor-card">
-      <div class="monitor-header">
-        <h3>secure.authosense.com</h3>
-        <span class="status-badge online">Online</span>
+
+    <div class="monitoring-card">
+      <div class="card-header">
+        <h3>Security Scan Results</h3>
+        <div class="badge warning">3 Issues Found</div>
       </div>
-      <div class="monitor-stats">
-        <div class="stat-row">
-          <div class="stat-label">Uptime</div>
-          <div class="stat-value">100%</div>
-        </div>
-        <div class="stat-row">
-          <div class="stat-label">Response Time</div>
-          <div class="stat-value">92ms</div>
-        </div>
-        <div class="stat-row">
-          <div class="stat-label">Last Checked</div>
-          <div class="stat-value">1 minute ago</div>
-        </div>
+      <div class="card-body">
+        <ul class="scan-results">
+          <li>
+            <div class="result-icon warning">
+              <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="result-details">
+              <h4>SSL Certificate Expiring</h4>
+              <p>Your SSL certificate will expire in 14 days</p>
+            </div>
+            <button class="btn btn-small">Fix</button>
+          </li>
+          <li>
+            <div class="result-icon error">
+              <i class="fas fa-times-circle"></i>
+            </div>
+            <div class="result-details">
+              <h4>Outdated WordPress Version</h4>
+              <p>Your WordPress version is 5.8.2 (Current: 6.0.1)</p>
+            </div>
+            <button class="btn btn-small">Update</button>
+          </li>
+          <li>
+            <div class="result-icon warning">
+              <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="result-details">
+              <h4>Missing Security Headers</h4>
+              <p>Content-Security-Policy header not implemented</p>
+            </div>
+            <button class="btn btn-small">Fix</button>
+          </li>
+        </ul>
       </div>
-      <div class="monitor-chart">
-        <canvas id="uptimeChart2"></canvas>
-      </div>
-      <div class="monitor-actions">
-        <button class="btn btn-primary">View Details</button>
-        <button class="btn btn-outline">Configure Alerts</button>
-      </div>
-    </div>
-    
-    <div class="monitor-card add-website">
-      <div class="add-icon">
-        <i class="fas fa-plus-circle"></i>
-      </div>
-      <h3>Add New Website</h3>
-      <p>Start monitoring another website</p>
-      <button class="btn btn-primary">Add Website</button>
     </div>
   </div>
-  
-  <div class="security-scan">
-    <div class="scan-header">
-      <h3>Security Scan Results</h3>
-      <button class="btn btn-outline">Run New Scan</button>
-    </div>
-    <div class="scan-results">
-      <div class="scan-item success">
-        <div class="scan-icon"><i class="fas fa-check-circle"></i></div>
-        <div class="scan-details">
-          <h4>SSL Certificate</h4>
-          <p>Valid and up to date</p>
-        </div>
-      </div>
-      <div class="scan-item success">
-        <div class="scan-icon"><i class="fas fa-check-circle"></i></div>
-        <div class="scan-details">
-          <h4>DNS Configuration</h4>
-          <p>Properly configured</p>
-        </div>
-      </div>
-      <div class="scan-item warning">
-        <div class="scan-icon"><i class="fas fa-exclamation-circle"></i></div>
-        <div class="scan-details">
-          <h4>Content Security Policy</h4>
-          <p>Recommendations available</p>
-        </div>
-      </div>
-      <div class="scan-item success">
-        <div class="scan-icon"><i class="fas fa-check-circle"></i></div>
-        <div class="scan-details">
-          <h4>HTTPS Redirection</h4>
-          <p>Properly enforced</p>
-        </div>
-      </div>
-    </div>
+
+  <div class="action-buttons">
+    <button class="btn btn-primary">
+      <i class="fas fa-sync-alt"></i> Run New Scan
+    </button>
+    <button class="btn btn-outline">
+      <i class="fas fa-download"></i> Download Report
+    </button>
   </div>
 </div>
