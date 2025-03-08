@@ -1,148 +1,166 @@
 
-// Auto Logout Functionality
-
 class AutoLogout {
   constructor(options = {}) {
-    // Default options
     this.options = {
-      warningTime: 60000, // 1 minute before showing warning
-      logoutTime: 10000,  // 10 seconds countdown after warning
-      warningElement: document.getElementById('autoLogoutWarning'),
-      countdownElement: document.getElementById('logoutCountdown'),
-      stayLoggedInButton: document.getElementById('stayLoggedIn'),
-      logoutNowButton: document.getElementById('logoutNow'),
-      onLogout: () => { window.location.href = 'index.html'; },
-      ...options
+      warningTime: options.warningTime || 4 * 60 * 1000, // 4 minutes
+      logoutTime: options.logoutTime || 10 * 1000, // 10 seconds after warning
+      warningElement: options.warningElement || '#autoLogoutWarning',
+      countdownElement: options.countdownElement || '#logoutCountdown',
+      stayLoggedInButton: options.stayLoggedInButton || '#stayLoggedIn',
+      logoutNowButton: options.logoutNowButton || '#logoutNow',
+      onLogout: options.onLogout || this.defaultLogout,
+      activityEvents: options.activityEvents || [
+        'mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click', 'keydown'
+      ]
     };
-    
-    // Initialize timers
-    this.idleTimer = null;
-    this.countdownTimer = null;
+
+    this.inactivityTimer = null;
+    this.countdownInterval = null;
     this.secondsLeft = this.options.logoutTime / 1000;
     
-    // Bind methods
-    this.resetIdleTimer = this.resetIdleTimer.bind(this);
-    this.showWarning = this.showWarning.bind(this);
-    this.startCountdown = this.startCountdown.bind(this);
-    this.cancelLogout = this.cancelLogout.bind(this);
-    this.performLogout = this.performLogout.bind(this);
+    this.warningElement = document.querySelector(this.options.warningElement);
+    this.countdownElement = document.querySelector(this.options.countdownElement);
+    this.stayLoggedInButton = document.querySelector(this.options.stayLoggedInButton);
+    this.logoutNowButton = document.querySelector(this.options.logoutNowButton);
     
-    // Initialize the auto logout
+    this.resetInactivityTimer = this.resetInactivityTimer.bind(this);
+    this.showWarning = this.showWarning.bind(this);
+    this.hideWarning = this.hideWarning.bind(this);
+    this.performLogout = this.performLogout.bind(this);
+    this.updateCountdown = this.updateCountdown.bind(this);
+    
     this.init();
   }
   
   init() {
-    // Set up event listeners to reset idle timer
-    ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'].forEach(eventName => {
-      document.addEventListener(eventName, this.resetIdleTimer, true);
+    // Set up event listeners for user activity
+    this.options.activityEvents.forEach(event => {
+      document.addEventListener(event, this.resetInactivityTimer);
     });
     
-    // Set up stay logged in button
-    if (this.options.stayLoggedInButton) {
-      this.options.stayLoggedInButton.addEventListener('click', this.cancelLogout);
+    // Set up UI controls
+    if (this.stayLoggedInButton) {
+      this.stayLoggedInButton.addEventListener('click', this.hideWarning);
     }
     
-    // Set up logout now button
-    if (this.options.logoutNowButton) {
-      this.options.logoutNowButton.addEventListener('click', this.performLogout);
+    if (this.logoutNowButton) {
+      this.logoutNowButton.addEventListener('click', this.performLogout);
     }
     
-    // Start the initial idle timer
-    this.resetIdleTimer();
+    // Start the inactivity timer
+    this.resetInactivityTimer();
   }
   
-  resetIdleTimer() {
-    // Clear any existing timer
-    if (this.idleTimer) {
-      clearTimeout(this.idleTimer);
-    }
+  resetInactivityTimer() {
+    // Clear existing timer
+    clearTimeout(this.inactivityTimer);
     
-    // Start a new timer
-    this.idleTimer = setTimeout(this.showWarning, this.options.warningTime);
+    // Set new timer
+    this.inactivityTimer = setTimeout(this.showWarning, this.options.warningTime);
+    
+    // Hide warning if it's showing
+    if (this.warningElement && this.warningElement.classList.contains('show')) {
+      this.hideWarning();
+    }
   }
   
   showWarning() {
-    // Show the warning element
-    if (this.options.warningElement) {
-      this.options.warningElement.classList.add('show');
+    if (this.warningElement) {
+      this.warningElement.classList.add('show');
+      
+      // Reset countdown
+      this.secondsLeft = this.options.logoutTime / 1000;
+      this.updateCountdown();
+      
+      // Start countdown
+      clearInterval(this.countdownInterval);
+      this.countdownInterval = setInterval(() => {
+        this.secondsLeft--;
+        this.updateCountdown();
+        
+        if (this.secondsLeft <= 0) {
+          this.performLogout();
+        }
+      }, 1000);
     }
-    
-    // Start the countdown
-    this.startCountdown();
   }
   
-  startCountdown() {
-    // Reset seconds
-    this.secondsLeft = this.options.logoutTime / 1000;
-    
-    // Update countdown display
-    if (this.options.countdownElement) {
-      this.options.countdownElement.textContent = this.secondsLeft;
+  hideWarning() {
+    if (this.warningElement) {
+      this.warningElement.classList.remove('show');
+      clearInterval(this.countdownInterval);
+      this.resetInactivityTimer();
     }
-    
-    // Clear any existing countdown
-    if (this.countdownTimer) {
-      clearInterval(this.countdownTimer);
-    }
-    
-    // Start the countdown
-    this.countdownTimer = setInterval(() => {
-      this.secondsLeft--;
-      
-      // Update countdown display
-      if (this.options.countdownElement) {
-        this.options.countdownElement.textContent = this.secondsLeft;
-      }
-      
-      // Check if countdown is complete
-      if (this.secondsLeft <= 0) {
-        clearInterval(this.countdownTimer);
-        this.performLogout();
-      }
-    }, 1000);
   }
   
-  cancelLogout() {
-    // Hide the warning
-    if (this.options.warningElement) {
-      this.options.warningElement.classList.remove('show');
+  updateCountdown() {
+    if (this.countdownElement) {
+      this.countdownElement.textContent = Math.max(0, Math.floor(this.secondsLeft)).toString();
     }
-    
-    // Clear the countdown
-    if (this.countdownTimer) {
-      clearInterval(this.countdownTimer);
-    }
-    
-    // Reset the idle timer
-    this.resetIdleTimer();
   }
   
   performLogout() {
-    // Clean up
-    if (this.idleTimer) {
-      clearTimeout(this.idleTimer);
+    clearTimeout(this.inactivityTimer);
+    clearInterval(this.countdownInterval);
+    
+    if (this.warningElement) {
+      this.warningElement.classList.remove('show');
     }
     
-    if (this.countdownTimer) {
-      clearInterval(this.countdownTimer);
+    this.options.onLogout();
+  }
+  
+  defaultLogout() {
+    // Default logout behavior
+    alert('You have been logged out due to inactivity.');
+    window.location.reload();
+  }
+  
+  // Public method to clean up event listeners
+  destroy() {
+    this.options.activityEvents.forEach(event => {
+      document.removeEventListener(event, this.resetInactivityTimer);
+    });
+    
+    if (this.stayLoggedInButton) {
+      this.stayLoggedInButton.removeEventListener('click', this.hideWarning);
     }
     
-    // Hide the warning
-    if (this.options.warningElement) {
-      this.options.warningElement.classList.remove('show');
+    if (this.logoutNowButton) {
+      this.logoutNowButton.removeEventListener('click', this.performLogout);
     }
     
-    // Execute the logout callback
-    if (typeof this.options.onLogout === 'function') {
-      this.options.onLogout();
-    }
+    clearTimeout(this.inactivityTimer);
+    clearInterval(this.countdownInterval);
   }
 }
 
-// Initialize when DOM is ready
+// Create instance for demo purposes
 document.addEventListener('DOMContentLoaded', () => {
-  // Wait for components to load
-  setTimeout(() => {
-    new AutoLogout();
-  }, 500);
+  const autoLogout = new AutoLogout({
+    warningTime: 60 * 1000, // For demo: show warning after 1 minute
+    onLogout: () => {
+      // Create a toast message
+      const toast = document.createElement('div');
+      toast.className = 'toast show';
+      toast.innerHTML = `
+        <div class="toast-content">
+          <div class="toast-title">Session Ended</div>
+          <div class="toast-message">You have been logged out due to inactivity.</div>
+        </div>
+      `;
+      document.body.appendChild(toast);
+      
+      // Show toast for 3 seconds then reload page
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+          window.location.reload();
+        }, 300);
+      }, 3000);
+    }
+  });
+  
+  // Add to window for debugging
+  window.autoLogout = autoLogout;
 });
