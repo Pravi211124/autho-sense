@@ -1,92 +1,84 @@
 
 document.addEventListener('DOMContentLoaded', function() {
-  // Get current year for footer
-  const currentYearElement = document.getElementById('current-year');
-  if (currentYearElement) {
-    currentYearElement.textContent = new Date().getFullYear();
-  }
-
-  // Initialize AOS library if it's loaded
-  if (typeof AOS !== 'undefined') {
-    AOS.init({
-      duration: 800,
-      easing: 'ease-in-out',
-      once: true
-    });
-  }
-
-  // Toggle mobile menu
-  const menuToggle = document.getElementById('menuToggle');
-  const navLinks = document.querySelector('.nav-links');
+  // Initialize mobile menu toggle
+  const menuToggle = document.querySelector('.mobile-menu-toggle');
+  const mobileMenu = document.querySelector('.mobile-menu');
   
-  if (menuToggle && navLinks) {
+  if (menuToggle && mobileMenu) {
     menuToggle.addEventListener('click', function() {
-      navLinks.classList.toggle('active');
+      mobileMenu.classList.toggle('active');
     });
   }
-
-  // Scroll to top button
-  const scrollToTopBtn = document.getElementById('scrollToTop');
   
-  if (scrollToTopBtn) {
-    // Show/hide scroll to top button based on scroll position
-    window.addEventListener('scroll', function() {
-      if (window.pageYOffset > 300) {
-        scrollToTopBtn.classList.add('show');
-      } else {
-        scrollToTopBtn.classList.remove('show');
+  // Initialize smooth scrolling for anchor links
+  const anchorLinks = document.querySelectorAll('a[href^="#"]');
+  
+  anchorLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+      const targetId = this.getAttribute('href');
+      if (targetId === '#') return;
+      
+      const targetElement = document.querySelector(targetId);
+      
+      if (targetElement) {
+        e.preventDefault();
+        window.scrollTo({
+          top: targetElement.offsetTop - 80, // Adjust for header height
+          behavior: 'smooth'
+        });
+        
+        // Close mobile menu if open
+        if (mobileMenu && mobileMenu.classList.contains('active')) {
+          mobileMenu.classList.remove('active');
+        }
       }
     });
-
-    // Scroll to top when button is clicked
-    scrollToTopBtn.addEventListener('click', function() {
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
-    });
-  }
-
-  // Demo button functionality
-  const demoButtons = document.querySelectorAll('#demoButton, #demoButtonHero');
-  const toast = document.getElementById('toast');
+  });
+  
+  // Handle demo buttons on the index page
+  const demoButtons = document.querySelectorAll('.demo-btn');
   
   demoButtons.forEach(button => {
-    if (button) {
-      button.addEventListener('click', function(e) {
-        e.preventDefault();
-        
-        // Show toast notification
-        if (toast) {
-          toast.classList.add('show');
-          
-          // Hide toast after 3 seconds
-          setTimeout(function() {
-            toast.classList.remove('show');
-          }, 3000);
-        }
-        
-        // Redirect to dashboard after a short delay
-        setTimeout(function() {
-          window.location.href = 'dashboard.html';
-        }, 1500);
-      });
-    }
+    button.addEventListener('click', function() {
+      window.location.href = 'dashboard.html';
+    });
   });
-
-  // Smooth scrolling for anchor links
-  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    if (!anchor.getAttribute('href').includes('tab')) {
-      anchor.addEventListener('click', function(e) {
-        const target = document.querySelector(this.getAttribute('href'));
-        
-        if (target) {
-          e.preventDefault();
-          target.scrollIntoView({
-            behavior: 'smooth'
-          });
-        }
-      });
-    }
+  
+  // Handle login buttons on the index page
+  const loginButtons = document.querySelectorAll('.login-btn');
+  
+  loginButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      window.location.href = 'dashboard.html';
+    });
   });
+  
+  // Handle sign up buttons on the index page
+  const signupButtons = document.querySelectorAll('.signup-btn');
+  
+  signupButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      window.location.href = 'register.html';
+    });
+  });
+  
+  // Initialize animations for elements that should animate when they come into view
+  const animatedElements = document.querySelectorAll('.animate-on-scroll');
+  
+  function checkIfInView() {
+    animatedElements.forEach(element => {
+      const elementPosition = element.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+      
+      if (elementPosition.top < windowHeight * 0.8) {
+        element.classList.add('in-view');
+      }
+    });
+  }
+  
+  // Check elements on page load
+  checkIfInView();
+  
+  // Check elements on scroll
+  window.addEventListener('scroll', checkIfInView);
 });
