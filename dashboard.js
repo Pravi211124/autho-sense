@@ -3,34 +3,28 @@ document.addEventListener('DOMContentLoaded', function() {
   // Load all components
   loadComponent('navbar-container', 'components/navbar.html', initNavbar);
   loadComponent('sidebar-container', 'components/sidebar.html', initSidebar);
-  loadComponent('dashboard-header-container', 'components/dashboard-header.html', initDashboardHeader);
+  loadComponent('dashboard-header-container', 'components/dashboard-header.html');
   loadComponent('home-tab-container', 'components/home-tab.html', initHomeTab);
-  loadComponent('user-log-tab-container', 'components/user-log-tab.html');
-  loadComponent('settings-tab-container', 'components/settings-tab.html');
+  loadComponent('user-log-tab-container', 'components/user-log-tab.html', initUserLogTab);
+  loadComponent('settings-tab-container', 'components/settings-tab.html', initSettingsTab);
+  loadComponent('monitoring-tab-container', 'components/monitoring-tab.html', initMonitoringTab);
   loadComponent('footer-container', 'components/footer.html');
-  
-  // Initialize auto logout
-  initAutoLogout();
-  
-  // Initialize login modal functionality
-  initLoginModal();
-  
-  // Initialize forgot password modal
-  initForgotPasswordModal();
-  
-  // Update date and time
-  updateDateTime();
-  setInterval(updateDateTime, 1000);
-});
 
-function loadComponent(containerId, componentUrl, callback) {
-  const container = document.getElementById(containerId);
-  
-  if (container) {
-    fetch(componentUrl)
+  // Initialize auto-logout functionality
+  initAutoLogout();
+
+  // Function to load component HTML
+  function loadComponent(containerId, componentPath, callback) {
+    const container = document.getElementById(containerId);
+    if (!container) {
+      console.error(`Container ${containerId} not found`);
+      return;
+    }
+
+    fetch(componentPath)
       .then(response => {
         if (!response.ok) {
-          throw new Error(`Failed to load component: ${response.status}`);
+          throw new Error(`Failed to load ${componentPath}: ${response.status} ${response.statusText}`);
         }
         return response.text();
       })
@@ -41,368 +35,265 @@ function loadComponent(containerId, componentUrl, callback) {
         }
       })
       .catch(error => {
-        console.error(`Error loading ${componentUrl}:`, error);
-        container.innerHTML = `<div class="error-message">Error loading content from ${componentUrl}</div>`;
+        console.error('Error loading component:', error);
+        container.innerHTML = `<div class="error-message">Failed to load component. ${error.message}</div>`;
       });
   }
-}
 
-function initNavbar() {
-  const logoutBtn = document.getElementById('logoutBtn');
-  const loginBtn = document.getElementById('loginBtn');
-  
-  if (logoutBtn) {
-    logoutBtn.addEventListener('click', function() {
-      alert('Logging out...');
-      // In a real app, this would handle the logout process
-      window.location.href = 'index.html';
-    });
-  }
-  
-  if (loginBtn) {
-    loginBtn.addEventListener('click', function() {
-      openLoginModal();
-    });
-  }
-}
-
-function initSidebar() {
-  const tabButtons = document.querySelectorAll('.sidebar-nav a');
-  
-  tabButtons.forEach(button => {
-    button.addEventListener('click', function(e) {
-      e.preventDefault();
-      const tabId = this.getAttribute('data-tab');
-      if (tabId) {
+  // Tab switching functionality
+  function initTabSwitching() {
+    const tabLinks = document.querySelectorAll('[data-tab]');
+    tabLinks.forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const tabId = this.getAttribute('data-tab');
         switchTab(tabId);
-      }
-    });
-  });
-}
-
-function initDashboardHeader() {
-  const runVerificationBtn = document.getElementById('runVerification');
-  const websiteMonitoringBtn = document.getElementById('websiteMonitoring');
-  
-  if (runVerificationBtn) {
-    runVerificationBtn.addEventListener('click', function() {
-      alert('Running verification...');
-      // In a real app, this would trigger authentication verification
+      });
     });
   }
-  
-  if (websiteMonitoringBtn) {
-    websiteMonitoringBtn.addEventListener('click', function() {
-      const tabId = this.getAttribute('data-tab');
-      if (tabId) {
+
+  function switchTab(tabId) {
+    // Hide all tab contents
+    document.querySelectorAll('.tab-content').forEach(tab => {
+      tab.classList.remove('active');
+    });
+    
+    // Show the selected tab content
+    const selectedTab = document.getElementById(`${tabId}-container`);
+    if (selectedTab) {
+      selectedTab.classList.add('active');
+    }
+    
+    // Update active state in navbar
+    document.querySelectorAll('.nav-links a').forEach(link => {
+      link.classList.remove('active');
+      if (link.getAttribute('data-tab') === tabId) {
+        link.classList.add('active');
+      }
+    });
+    
+    // Update active state in sidebar
+    document.querySelectorAll('.sidebar-menu li').forEach(item => {
+      item.classList.remove('active');
+      const itemLink = item.querySelector('a');
+      if (itemLink && itemLink.getAttribute('data-tab') === tabId) {
+        item.classList.add('active');
+      }
+    });
+  }
+
+  // Initialize navbar functionality
+  function initNavbar() {
+    // Login button functionality
+    const loginButton = document.getElementById('loginButton');
+    if (loginButton) {
+      loginButton.addEventListener('click', function() {
+        openModal('loginModal');
+      });
+    }
+
+    // Forgot password link functionality
+    const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+    if (forgotPasswordLink) {
+      forgotPasswordLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        openModal('forgotPasswordModal');
+      });
+    }
+
+    // Init tab switching for navbar links
+    const navLinks = document.querySelectorAll('.nav-links a[data-tab]');
+    navLinks.forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const tabId = this.getAttribute('data-tab');
         switchTab(tabId);
+      });
+    });
+
+    // Mobile menu toggle
+    const menuToggle = document.getElementById('menuToggle');
+    const navLinksContainer = document.querySelector('.nav-links');
+    
+    if (menuToggle && navLinksContainer) {
+      menuToggle.addEventListener('click', function() {
+        navLinksContainer.classList.toggle('active');
+      });
+    }
+  }
+
+  // Initialize sidebar functionality
+  function initSidebar() {
+    // Sidebar links tab switching
+    const sidebarLinks = document.querySelectorAll('.sidebar-menu a[data-tab]');
+    sidebarLinks.forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const tabId = this.getAttribute('data-tab');
+        switchTab(tabId);
+      });
+    });
+
+    // Manual auto-logout button
+    const autoLogoutButton = document.getElementById('sidebar-auto-logout');
+    if (autoLogoutButton) {
+      autoLogoutButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        document.getElementById('autoLogoutWarning').classList.add('visible');
+      });
+    }
+  }
+
+  // Initialize home tab functionality
+  function initHomeTab() {
+    // Any specific home tab initialization can go here
+    console.log('Home tab initialized');
+  }
+
+  // Initialize user log tab functionality
+  function initUserLogTab() {
+    // Any specific user log tab initialization can go here
+    console.log('User log tab initialized');
+  }
+
+  // Initialize settings tab functionality
+  function initSettingsTab() {
+    // Any specific settings tab initialization can go here
+    console.log('Settings tab initialized');
+  }
+
+  // Initialize monitoring tab functionality
+  function initMonitoringTab() {
+    // Any specific monitoring tab initialization can go here
+    console.log('Monitoring tab initialized');
+    
+    // Get monitoring data buttons
+    const startMonitoringBtn = document.getElementById('startMonitoring');
+    const stopMonitoringBtn = document.getElementById('stopMonitoring');
+    
+    if (startMonitoringBtn) {
+      startMonitoringBtn.addEventListener('click', function() {
+        console.log('Starting monitoring...');
+        document.querySelector('.monitoring-status').textContent = 'Active';
+        document.querySelector('.status-indicator').classList.remove('inactive');
+        document.querySelector('.status-indicator').classList.add('active');
+      });
+    }
+    
+    if (stopMonitoringBtn) {
+      stopMonitoringBtn.addEventListener('click', function() {
+        console.log('Stopping monitoring...');
+        document.querySelector('.monitoring-status').textContent = 'Inactive';
+        document.querySelector('.status-indicator').classList.remove('active');
+        document.querySelector('.status-indicator').classList.add('inactive');
+      });
+    }
+  }
+
+  // Initialize auto logout functionality
+  function initAutoLogout() {
+    // This is handled by AutoLogout.js
+    if (typeof AutoLogout !== 'undefined') {
+      const autoLogout = new AutoLogout({
+        warningTime: 300, // 5 minutes
+        logoutTime: 10,   // 10 seconds warning
+        warningElement: document.getElementById('autoLogoutWarning'),
+        countdownElement: document.getElementById('logoutCountdown'),
+        stayLoggedInButton: document.getElementById('stayLoggedIn'),
+        logoutNowButton: document.getElementById('logoutNow'),
+        onLogout: function() {
+          console.log('User logged out due to inactivity');
+          // In a real app, this would redirect to the login page
+          openModal('loginModal');
+        }
+      });
+      autoLogout.init();
+    }
+  }
+
+  // Modal functionality
+  function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+      modal.style.display = 'flex';
+    }
+  }
+
+  function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+      modal.style.display = 'none';
+    }
+  }
+
+  // Close modal when clicking the close button
+  document.querySelectorAll('.close-modal').forEach(button => {
+    button.addEventListener('click', function() {
+      const modal = this.closest('.modal');
+      if (modal) {
+        modal.style.display = 'none';
       }
     });
-  }
-}
+  });
 
-function initHomeTab() {
-  const startFaceAuthBtn = document.getElementById('startFaceAuth');
-  const startVoiceAuthBtn = document.getElementById('startVoiceAuth');
-  
-  if (startFaceAuthBtn) {
-    startFaceAuthBtn.addEventListener('click', function() {
-      toggleFaceAuth();
-    });
-  }
-  
-  if (startVoiceAuthBtn) {
-    startVoiceAuthBtn.addEventListener('click', function() {
-      toggleVoiceAuth();
-    });
-  }
-  
-  // Initialize the voice visualization canvas
-  initVoiceCanvas();
-}
-
-function toggleFaceAuth() {
-  const faceVideo = document.getElementById('faceVideo');
-  const faceStatus = document.getElementById('faceStatus');
-  const faceConfidence = document.getElementById('faceConfidence');
-  const faceConfidenceValue = document.getElementById('faceConfidenceValue');
-  const startFaceAuthBtn = document.getElementById('startFaceAuth');
-  
-  if (faceVideo && faceStatus && faceConfidence && faceConfidenceValue && startFaceAuthBtn) {
-    if (faceStatus.textContent === 'Camera Off') {
-      // Start face auth
-      faceStatus.textContent = 'Verifying...';
-      startFaceAuthBtn.innerHTML = '<i class="fas fa-stop"></i> Stop';
-      
-      // Simulate camera starting and verification
-      setTimeout(() => {
-        faceStatus.textContent = 'Verified';
-        faceConfidence.style.width = '85%';
-        faceConfidenceValue.textContent = '85%';
-      }, 2000);
-      
-      // In a real app, this would start the camera and face verification
-    } else {
-      // Stop face auth
-      faceStatus.textContent = 'Camera Off';
-      startFaceAuthBtn.innerHTML = '<i class="fas fa-play"></i> Start';
-      faceConfidence.style.width = '0%';
-      faceConfidenceValue.textContent = '0%';
-      
-      // In a real app, this would stop the camera and face verification
-    }
-  }
-}
-
-function toggleVoiceAuth() {
-  const voiceStatus = document.getElementById('voiceStatus');
-  const voiceConfidence = document.getElementById('voiceConfidence');
-  const voiceConfidenceValue = document.getElementById('voiceConfidenceValue');
-  const startVoiceAuthBtn = document.getElementById('startVoiceAuth');
-  
-  if (voiceStatus && voiceConfidence && voiceConfidenceValue && startVoiceAuthBtn) {
-    if (voiceStatus.textContent === 'Microphone Off') {
-      // Start voice auth
-      voiceStatus.textContent = 'Listening...';
-      startVoiceAuthBtn.innerHTML = '<i class="fas fa-stop"></i> Stop';
-      
-      // Simulate microphone starting and voice verification
-      startVoiceVisualization();
-      
-      setTimeout(() => {
-        voiceStatus.textContent = 'Verified';
-        voiceConfidence.style.width = '90%';
-        voiceConfidenceValue.textContent = '90%';
-      }, 2000);
-      
-      // In a real app, this would start the microphone and voice verification
-    } else {
-      // Stop voice auth
-      voiceStatus.textContent = 'Microphone Off';
-      startVoiceAuthBtn.innerHTML = '<i class="fas fa-microphone"></i> Start';
-      voiceConfidence.style.width = '0%';
-      voiceConfidenceValue.textContent = '0%';
-      stopVoiceVisualization();
-      
-      // In a real app, this would stop the microphone and voice verification
-    }
-  }
-}
-
-let voiceVisualizationInterval;
-let voiceCanvas;
-let voiceCtx;
-
-function initVoiceCanvas() {
-  voiceCanvas = document.getElementById('voiceCanvas');
-  if (voiceCanvas) {
-    voiceCtx = voiceCanvas.getContext('2d');
-    // Set canvas dimensions
-    voiceCanvas.width = voiceCanvas.parentElement.clientWidth;
-    voiceCanvas.height = voiceCanvas.parentElement.clientHeight;
-  }
-}
-
-function startVoiceVisualization() {
-  if (!voiceCanvas || !voiceCtx) return;
-  
-  // Clear previous interval if any
-  if (voiceVisualizationInterval) {
-    clearInterval(voiceVisualizationInterval);
-  }
-  
-  // Draw voice visualization (simple waveform)
-  voiceVisualizationInterval = setInterval(() => {
-    voiceCtx.clearRect(0, 0, voiceCanvas.width, voiceCanvas.height);
-    voiceCtx.beginPath();
-    voiceCtx.strokeStyle = '#4CAF50';
-    voiceCtx.lineWidth = 2;
-    
-    const centerY = voiceCanvas.height / 2;
-    const amplitude = Math.random() * 20 + 10; // Random amplitude for visualization
-    
-    for (let x = 0; x < voiceCanvas.width; x += 2) {
-      const y = centerY + Math.sin(x * 0.1 + Date.now() * 0.01) * amplitude;
-      if (x === 0) {
-        voiceCtx.moveTo(x, y);
-      } else {
-        voiceCtx.lineTo(x, y);
+  // Close modal when clicking outside the content
+  document.querySelectorAll('.modal').forEach(modal => {
+    modal.addEventListener('click', function(e) {
+      if (e.target === this) {
+        this.style.display = 'none';
       }
-    }
-    
-    voiceCtx.stroke();
-  }, 50);
-}
-
-function stopVoiceVisualization() {
-  if (voiceVisualizationInterval) {
-    clearInterval(voiceVisualizationInterval);
-    voiceVisualizationInterval = null;
-  }
-  
-  if (voiceCanvas && voiceCtx) {
-    voiceCtx.clearRect(0, 0, voiceCanvas.width, voiceCanvas.height);
-  }
-}
-
-function switchTab(tabId) {
-  // Hide all tabs
-  const tabContents = document.querySelectorAll('.tab-content');
-  tabContents.forEach(tab => {
-    tab.classList.remove('active');
+    });
   });
-  
-  // Show the selected tab
-  const selectedTab = document.getElementById(`${tabId}-container`);
-  if (selectedTab) {
-    selectedTab.classList.add('active');
-  }
-  
-  // Update active state in sidebar
-  const sidebarLinks = document.querySelectorAll('.sidebar-nav a');
-  sidebarLinks.forEach(link => {
-    link.classList.remove('active');
-    if (link.getAttribute('data-tab') === tabId) {
-      link.classList.add('active');
-    }
-  });
-}
 
-function updateDateTime() {
-  const dateElement = document.getElementById('current-date');
-  const timeElement = document.getElementById('current-time');
-  
-  if (dateElement && timeElement) {
-    const now = new Date();
-    
-    // Format date: Monday, January 1, 2023
-    const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    dateElement.textContent = now.toLocaleDateString('en-US', dateOptions);
-    
-    // Format time: 12:00:00 PM
-    const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
-    timeElement.textContent = now.toLocaleTimeString('en-US', timeOptions);
-  }
-}
-
-function openLoginModal() {
-  const loginModal = document.getElementById('loginModal');
-  if (loginModal) {
-    loginModal.style.display = 'flex';
-  }
-}
-
-function closeLoginModal() {
-  const loginModal = document.getElementById('loginModal');
-  if (loginModal) {
-    loginModal.style.display = 'none';
-  }
-}
-
-function openForgotPasswordModal() {
-  closeLoginModal();
-  const forgotPasswordModal = document.getElementById('forgotPasswordModal');
-  if (forgotPasswordModal) {
-    forgotPasswordModal.style.display = 'flex';
-  }
-}
-
-function closeForgotPasswordModal() {
-  const forgotPasswordModal = document.getElementById('forgotPasswordModal');
-  if (forgotPasswordModal) {
-    forgotPasswordModal.style.display = 'none';
-  }
-}
-
-function initLoginModal() {
-  const loginModal = document.getElementById('loginModal');
+  // Handle login form submission
   const loginForm = document.getElementById('loginForm');
-  const closeModalBtns = document.querySelectorAll('.close-modal');
-  const forgotPasswordBtn = document.getElementById('forgotPasswordBtn');
-  
   if (loginForm) {
     loginForm.addEventListener('submit', function(e) {
       e.preventDefault();
-      alert('Login successful!');
-      closeLoginModal();
-    });
-  }
-  
-  if (closeModalBtns) {
-    closeModalBtns.forEach(btn => {
-      btn.addEventListener('click', function() {
-        closeLoginModal();
-        closeForgotPasswordModal();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      
+      console.log(`Login attempt for: ${email}`);
+      // This would normally call an authentication API
+      
+      // For demo purposes, just close the modal and show logged in state
+      closeModal('loginModal');
+      
+      // Update UI to show logged in status
+      document.querySelectorAll('.user-profile').forEach(profile => {
+        profile.classList.add('logged-in');
       });
     });
   }
-  
-  if (forgotPasswordBtn) {
-    forgotPasswordBtn.addEventListener('click', function(e) {
-      e.preventDefault();
-      openForgotPasswordModal();
-    });
-  }
-  
-  // Close modal when clicking outside of it
-  window.addEventListener('click', function(e) {
-    if (e.target === loginModal) {
-      closeLoginModal();
-    }
-  });
-}
 
-function initForgotPasswordModal() {
-  const forgotPasswordModal = document.getElementById('forgotPasswordModal');
+  // Handle forgot password form submission
   const forgotPasswordForm = document.getElementById('forgotPasswordForm');
-  const backToLoginBtn = document.getElementById('backToLoginBtn');
-  
   if (forgotPasswordForm) {
     forgotPasswordForm.addEventListener('submit', function(e) {
       e.preventDefault();
-      alert('Password reset link sent to your email!');
-      closeForgotPasswordModal();
+      const email = document.getElementById('resetEmail').value;
+      
+      console.log(`Password reset requested for: ${email}`);
+      // This would normally call a password reset API
+      
+      // For demo purposes, just close the modal
+      closeModal('forgotPasswordModal');
+      
+      // Show a toast or notification
+      alert('Password reset link sent to your email');
     });
   }
-  
+
+  // Back to login button in forgot password modal
+  const backToLoginBtn = document.getElementById('backToLoginBtn');
   if (backToLoginBtn) {
     backToLoginBtn.addEventListener('click', function(e) {
       e.preventDefault();
-      closeForgotPasswordModal();
-      openLoginModal();
+      closeModal('forgotPasswordModal');
+      openModal('loginModal');
     });
   }
-  
-  // Close modal when clicking outside of it
-  window.addEventListener('click', function(e) {
-    if (e.target === forgotPasswordModal) {
-      closeForgotPasswordModal();
-    }
-  });
-}
 
-function initAutoLogout() {
-  // Auto logout functionality is handled in AutoLogout.js
-  const autoLogoutWarning = document.getElementById('autoLogoutWarning');
-  const stayLoggedInBtn = document.getElementById('stayLoggedIn');
-  const logoutNowBtn = document.getElementById('logoutNow');
-  
-  if (stayLoggedInBtn) {
-    stayLoggedInBtn.addEventListener('click', function() {
-      if (autoLogoutWarning) {
-        autoLogoutWarning.style.display = 'none';
-      }
-      // Reset the auto logout timer
-      if (typeof resetAutoLogoutTimer === 'function') {
-        resetAutoLogoutTimer();
-      }
-    });
-  }
-  
-  if (logoutNowBtn) {
-    logoutNowBtn.addEventListener('click', function() {
-      alert('Logging out now...');
-      window.location.href = 'index.html';
-    });
-  }
-}
+  // After all components are loaded, initialize tab switching
+  setTimeout(initTabSwitching, 500);
+});

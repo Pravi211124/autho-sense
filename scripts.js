@@ -1,84 +1,94 @@
 
 document.addEventListener('DOMContentLoaded', function() {
-  // Initialize mobile menu toggle
-  const menuToggle = document.querySelector('.mobile-menu-toggle');
-  const mobileMenu = document.querySelector('.mobile-menu');
+  // Current year for footer
+  const currentYearElement = document.getElementById('current-year');
+  if (currentYearElement) {
+    currentYearElement.textContent = new Date().getFullYear();
+  }
+
+  // Menu toggle functionality
+  const menuToggle = document.getElementById('menuToggle');
+  const navLinks = document.querySelector('.nav-links');
   
-  if (menuToggle && mobileMenu) {
+  if (menuToggle && navLinks) {
     menuToggle.addEventListener('click', function() {
-      mobileMenu.classList.toggle('active');
+      navLinks.classList.toggle('active');
     });
   }
+
+  // Scroll to top functionality
+  const scrollToTopButton = document.getElementById('scrollToTop');
   
-  // Initialize smooth scrolling for anchor links
-  const anchorLinks = document.querySelectorAll('a[href^="#"]');
-  
-  anchorLinks.forEach(link => {
-    link.addEventListener('click', function(e) {
-      const targetId = this.getAttribute('href');
-      if (targetId === '#') return;
+  if (scrollToTopButton) {
+    window.addEventListener('scroll', function() {
+      if (window.pageYOffset > 300) {
+        scrollToTopButton.classList.add('visible');
+      } else {
+        scrollToTopButton.classList.remove('visible');
+      }
+    });
+    
+    scrollToTopButton.addEventListener('click', function() {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+  }
+
+  // Smooth scrolling for anchor links
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+      const href = this.getAttribute('href');
       
-      const targetElement = document.querySelector(targetId);
-      
-      if (targetElement) {
+      if (href !== '#' && href.startsWith('#')) {
         e.preventDefault();
-        window.scrollTo({
-          top: targetElement.offsetTop - 80, // Adjust for header height
-          behavior: 'smooth'
-        });
         
-        // Close mobile menu if open
-        if (mobileMenu && mobileMenu.classList.contains('active')) {
-          mobileMenu.classList.remove('active');
+        const targetElement = document.querySelector(href);
+        if (targetElement) {
+          targetElement.scrollIntoView({
+            behavior: 'smooth'
+          });
+          
+          // Close mobile menu if open
+          navLinks.classList.remove('active');
         }
       }
     });
   });
+
+  // Toast notification functionality
+  const toast = document.getElementById('toast');
+  const demoButton = document.getElementById('demoButton');
+  const demoButtonHero = document.getElementById('demoButtonHero');
   
-  // Handle demo buttons on the index page
-  const demoButtons = document.querySelectorAll('.demo-btn');
+  function showToast() {
+    if (toast) {
+      toast.classList.add('visible');
+      setTimeout(() => {
+        toast.classList.remove('visible');
+      }, 3000);
+    }
+  }
   
-  demoButtons.forEach(button => {
-    button.addEventListener('click', function() {
-      window.location.href = 'dashboard.html';
-    });
-  });
-  
-  // Handle login buttons on the index page
-  const loginButtons = document.querySelectorAll('.login-btn');
-  
-  loginButtons.forEach(button => {
-    button.addEventListener('click', function() {
-      window.location.href = 'dashboard.html';
-    });
-  });
-  
-  // Handle sign up buttons on the index page
-  const signupButtons = document.querySelectorAll('.signup-btn');
-  
-  signupButtons.forEach(button => {
-    button.addEventListener('click', function() {
-      window.location.href = 'register.html';
-    });
-  });
-  
-  // Initialize animations for elements that should animate when they come into view
-  const animatedElements = document.querySelectorAll('.animate-on-scroll');
-  
-  function checkIfInView() {
-    animatedElements.forEach(element => {
-      const elementPosition = element.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
-      
-      if (elementPosition.top < windowHeight * 0.8) {
-        element.classList.add('in-view');
-      }
+  if (demoButton) {
+    demoButton.addEventListener('click', function(e) {
+      showToast();
     });
   }
   
-  // Check elements on page load
-  checkIfInView();
-  
-  // Check elements on scroll
-  window.addEventListener('scroll', checkIfInView);
+  if (demoButtonHero) {
+    demoButtonHero.addEventListener('click', function(e) {
+      showToast();
+    });
+  }
+
+  // Initialize AOS animation library
+  if (typeof AOS !== 'undefined') {
+    AOS.init({
+      duration: 800,
+      once: true,
+      offset: 100
+    });
+  }
 });
