@@ -1,43 +1,31 @@
 
-// This script handles all interactions on the main landing page
-
 document.addEventListener('DOMContentLoaded', function() {
-  // Set current year in the footer
-  const currentYearElem = document.getElementById('current-year');
-  if (currentYearElem) {
-    currentYearElem.textContent = new Date().getFullYear();
+  // Get current year for footer
+  const currentYearElement = document.getElementById('current-year');
+  if (currentYearElement) {
+    currentYearElement.textContent = new Date().getFullYear();
   }
 
-  // Demo buttons
-  const demoButtonNav = document.getElementById('demoButton');
-  const demoButtonHero = document.getElementById('demoButtonHero');
-  const toast = document.getElementById('toast');
-
-  // Function to show toast notification
-  function showToast() {
-    toast.classList.add('show');
-    setTimeout(() => {
-      toast.classList.remove('show');
-      // Redirect to dashboard after showing toast
-      window.location.href = 'dashboard.html';
-    }, 2000);
-  }
-
-  // Add click event listeners to demo buttons
-  if (demoButtonNav) {
-    demoButtonNav.addEventListener('click', function(e) {
-      e.preventDefault();
-      showToast();
+  // Initialize AOS library if it's loaded
+  if (typeof AOS !== 'undefined') {
+    AOS.init({
+      duration: 800,
+      easing: 'ease-in-out',
+      once: true
     });
   }
 
-  if (demoButtonHero) {
-    demoButtonHero.addEventListener('click', function() {
-      showToast();
+  // Toggle mobile menu
+  const menuToggle = document.getElementById('menuToggle');
+  const navLinks = document.querySelector('.nav-links');
+  
+  if (menuToggle && navLinks) {
+    menuToggle.addEventListener('click', function() {
+      navLinks.classList.toggle('active');
     });
   }
 
-  // Scroll to top functionality
+  // Scroll to top button
   const scrollToTopBtn = document.getElementById('scrollToTop');
   
   if (scrollToTopBtn) {
@@ -59,23 +47,46 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // Mobile menu toggle
-  const menuToggle = document.getElementById('menuToggle');
-  const navLinks = document.querySelector('.nav-links');
+  // Demo button functionality
+  const demoButtons = document.querySelectorAll('#demoButton, #demoButtonHero');
+  const toast = document.getElementById('toast');
+  
+  demoButtons.forEach(button => {
+    if (button) {
+      button.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Show toast notification
+        if (toast) {
+          toast.classList.add('show');
+          
+          // Hide toast after 3 seconds
+          setTimeout(function() {
+            toast.classList.remove('show');
+          }, 3000);
+        }
+        
+        // Redirect to dashboard after a short delay
+        setTimeout(function() {
+          window.location.href = 'dashboard.html';
+        }, 1500);
+      });
+    }
+  });
 
-  if (menuToggle && navLinks) {
-    menuToggle.addEventListener('click', function() {
-      navLinks.classList.toggle('show');
-    });
-  }
-
-  // Initialize AOS library if available
-  if (typeof AOS !== 'undefined') {
-    AOS.init({
-      duration: 800,
-      easing: 'ease-in-out',
-      once: true,
-      mirror: false
-    });
-  }
+  // Smooth scrolling for anchor links
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    if (!anchor.getAttribute('href').includes('tab')) {
+      anchor.addEventListener('click', function(e) {
+        const target = document.querySelector(this.getAttribute('href'));
+        
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({
+            behavior: 'smooth'
+          });
+        }
+      });
+    }
+  });
 });
